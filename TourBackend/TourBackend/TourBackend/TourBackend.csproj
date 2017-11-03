@@ -87,20 +87,10 @@
     <Compile Include="Actors\GestureRecognitionActor.cs" />
     <Compile Include="Actors\SpeechRecognitionActor.cs" />
     <Compile Include="Actors\MicrophoneInterfaceActor.cs" />
-    <Compile Include="Protocols\BluetoothScannerInterfaceProtocol.cs" />
-    <Compile Include="Protocols\PositionBluetoothScannerProtocol.cs" />
-    <Compile Include="Protocols\GestureCameraFeedProtocol.cs" />
-    <Compile Include="Protocols\ControlPositionProtocol.cs" />
-    <Compile Include="Protocols\ControlRecognitionProtocol.cs" />
-    <Compile Include="Protocols\ControlInputProtocol.cs" />
-    <Compile Include="Protocols\PositionBluetoothDeviceProtocol.cs" />
-    <Compile Include="Protocols\RecognitionCodeObjectProtocol.cs" />
-    <Compile Include="Protocols\InputGestureProtocol.cs" />
-    <Compile Include="Protocols\InputSpeechProtocol.cs" />
-    <Compile Include="Protocols\SpeechRecognitionMicrophoneProtocol.cs" />
-    <Compile Include="Protocols\BluetoothDeviceInterfaceProtocol.cs" />
+    <Compile Include="Protocols\ControlToRecognitionManagerProtocol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocols\RecognitionManagerToCodeObjectsProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
