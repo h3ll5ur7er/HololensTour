@@ -5,10 +5,6 @@
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 /Assets/Experimental*
-/Assets/Editor*
-/Assets/Plugins*
-/Assets/Scripts*
-/Assets/StreamingAssets*
 /Assets/csc*
 /Assets/gmcs*
 /Assets/smcs*
