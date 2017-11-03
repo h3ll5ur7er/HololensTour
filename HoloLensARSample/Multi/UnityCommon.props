@@ -1,0 +1,10 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <UnityWSASolutionName>HoloLensARToolKit</UnityWSASolutionName>
+        <UnityWSASolutionDir>C:\Users\Moritz Scherer\Documents\Holotrio\HoloLensARToolKit\HoloLensARSample\Multi\</UnityWSASolutionDir>
+        <UnityProjectDir>C:\Users\Moritz Scherer\Documents\Holotrio\HoloLensARToolKit\HoloLensARSample\</UnityProjectDir>
+        <UnityWSAPlayerDir>C:\Program Files\Unity\Editor\Data\PlaybackEngines\MetroSupport\</UnityWSAPlayerDir>
+        <UnityWSAToolsDir>$(UnityWSASolutionDir)Unity\Tools\</UnityWSAToolsDir>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+</Project>
