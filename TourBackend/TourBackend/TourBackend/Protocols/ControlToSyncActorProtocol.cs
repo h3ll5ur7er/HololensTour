@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Proto;
 
 namespace TourBackend
 {
@@ -24,6 +25,9 @@ namespace TourBackend
 
     }
 
+    // Encapsulates the current state of an Object 
+    // This definition is subject to fluent change
+
     public class CodeObject {
 
         public string objectid;
@@ -39,6 +43,8 @@ namespace TourBackend
         }
     }
 
+    // Request to update the SyncObject with the current TourState
+
     public class WriteCurrentTourState
     {
 
@@ -50,7 +56,10 @@ namespace TourBackend
             id = _id;
             dict = _dict;
         }
+
     }
+
+    // Respond that the updating of the SyncObject has been successful
 
     public class RespondWriteCurrentTourState {
 
@@ -60,6 +69,16 @@ namespace TourBackend
             id = _id;
         }
 
+    }
+
+    public class SetSyncObject {
+        public string id;
+        public SyncObject sync;
+
+        public SetSyncObject(string _id, ref SyncObject _sync) {
+            id = _id;
+            sync = _sync;
+        }
     }
 
 }
