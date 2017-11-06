@@ -10,11 +10,13 @@ namespace TourBackend
     public class SyncActor : IActor
     {
 
-        protected string Id { get; }
+        protected string id { get; }
+        public object syncobject { get; }
 
-        public SyncActor(string id)
+        public SyncActor(string _id, object _syncobject)
         {
-            Id = id;
+            id = _id;
+            syncobject = _syncobject;
         }
 
         public Task ReceiveAsync(IContext context)
@@ -22,7 +24,11 @@ namespace TourBackend
             var msg = context.Message;
             switch (msg)
             {
+                case msg is WriteCurrentTourState w:
 
+
+
+                    break;
             }
             return Actor.Done;
         }
