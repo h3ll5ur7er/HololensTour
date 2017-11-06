@@ -12,9 +12,9 @@ namespace TourBackend
     {
 
         protected string id { get; }
-        public SyncObject syncobject; // Object which syncs Unity and the Actor framework
+        public volatile SyncObject syncobject; // Object which syncs Unity and the Actor framework
 
-        public SyncActor(string _id, ref SyncObject _syncobject)
+        public SyncActor(string _id, SyncObject _syncobject)
         {
             id = _id;
             syncobject = _syncobject;

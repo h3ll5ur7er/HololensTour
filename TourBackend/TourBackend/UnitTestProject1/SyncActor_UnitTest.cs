@@ -12,7 +12,7 @@ namespace TourBackend
     public class SyncActor_UnitTest
     {
         [TestMethod]
-        public void SyncActor_needs_to_be_able_to_write_on_SyncObject()
+        public async Task SyncActor_needs_to_be_able_to_write_on_SyncObject()
         {
 
             var dict = new Dictionary<string, CodeObject>();
@@ -29,10 +29,10 @@ namespace TourBackend
 
             CollectionAssert.AreEqual((System.Collections.ICollection)obj.dict, (System.Collections.ICollection)new Dictionary<string, CodeObject>()); // Check that SyncObject has no dict
 
-            var propsSyncActor1 = Actor.FromProducer(() => new SyncActor("SyncActor1", ref obj));
+            var propsSyncActor1 = Actor.FromProducer(() => new SyncActor("SyncActor1", obj));
             var pidSyncActor1 = Actor.Spawn(propsSyncActor1);
 
-            pidSyncActor1.Tell(new WriteCurrentTourState("dab",dict));
+            var reply = await pidSyncActor1.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("dab",dict), TimeSpan.FromSeconds(1));
 
             CollectionAssert.AreEqual((System.Collections.ICollection) obj.dict, (System.Collections.ICollection) dict);
 
@@ -54,7 +54,7 @@ namespace TourBackend
 
         CollectionAssert.AreEqual(obj.dict, null); // Check that SyncObject has no dict
 
-        var propsSyncActor1 = Actor.FromProducer(() => new SyncActor("SyncActor1", ref obj));
+        var propsSyncActor1 = Actor.FromProducer(() => new SyncActor("SyncActor1", obj));
         var pidSyncActor1 = Actor.Spawn(propsSyncActor1);
 
         var reply = await pidSyncActor1.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("req1", dict), TimeSpan.FromSeconds(1)); // Expect Answer
