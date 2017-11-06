@@ -24,8 +24,7 @@
 *
 */
 
-
-using System;
+    using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -40,287 +39,299 @@ using Windows.Media.Capture.Frames;
 using Windows.Graphics.Imaging;
 #endif
 
-/// <summary>
-/// The ARUWPController class represents an ARToolKit controller, much similar to 
-/// ARController.h and ARController.cpp in the wrapper project. It manages markers,
-/// initiates camera capture, starts native tracking functions and retrieve 
-/// tracking results.
-/// Parameters for ARUWPController can be set in Unity inspector, and can be changed
-/// via the runtime setter functions during application.
-///
-/// Author:     Long Qian
-/// Email:      lqian8@jhu.edu
-/// </summary>
-public class ARUWPController : MonoBehaviour {
-
     /// <summary>
-    /// Class and object identifier for logging. [internal use]
+    /// The ARUWPController class represents an ARToolKit controller, much similar to 
+    /// ARController.h and ARController.cpp in the wrapper project. It manages markers,
+    /// initiates camera capture, starts native tracking functions and retrieve 
+    /// tracking results.
+    /// Parameters for ARUWPController can be set in Unity inspector, and can be changed
+    /// via the runtime setter functions during application.
+    ///
+    /// Author:     Long Qian
+    /// Email:      lqian8@jhu.edu
     /// </summary>
-    private static string TAG = "ARUWPController";
+    public class ARUWPController : MonoBehaviour
+    {
 
-    /// <summary>
-    /// The status of ARUWPController is the most important parameter showing the property of the
-    /// application. It is shared by all scirpts. It is safe to read it from anywhere anytime, but
-    /// external changes to the status is prohibited. The value of the status can be:
-    /// <para/>ARUWP_STATUS_CLEAN: Nothing has been initialized. Video capture should be initialized
-    /// at this status.
-    /// <para/>ARUWP_STATUS_VIDEO_INITIALIZED: The video capture has been initialized, but the 
-    /// tracking has not been initialized. At this stage, markers can be added, tracking options 
-    /// can be changed. The access of native library is given to ARUWPController.cs and ARUWPMarker.cs
-    /// <para/>ARUWP_STATUS_CTRL_INITIALIZED: The video and tracking are both initialized, but the 
-    /// video pipeline is not started yet. At this stage, the access of native library is given to
-    /// ARUWPController.cs and ARUWPMarker.cs. StartFrameReaderAsync() should be called at this time.
-    /// <para/>ARUWP_STATUS_RUNNING: Video pipeline is running, new frame arrives, and tracking is
-    /// running. The access to the native library is given to the video thread (capture and tracking).
-    /// If StopFrameReaderAsync() is called, the status can be move back to ARUWP_STATUS_CTRL_INITIALIZED.
-    /// <para/>[read only]
-    /// </summary>
-    public int status = ARUWP.ARUWP_STATUS_CLEAN;
+        /// <summary>
+        /// Class and object identifier for logging. [internal use]
+        /// </summary>
+        private static string TAG = "ARUWPController";
 
-    /// <summary>
-    /// Frame width in pixel, shared by all scripts. It is set by ARUWPVideo.cs. [read only]
-    /// </summary>
-    public int frameWidth = 0;
+        /// <summary>
+        /// The status of ARUWPController is the most important parameter showing the property of the
+        /// application. It is shared by all scirpts. It is safe to read it from anywhere anytime, but
+        /// external changes to the status is prohibited. The value of the status can be:
+        /// <para/>ARUWP_STATUS_CLEAN: Nothing has been initialized. Video capture should be initialized
+        /// at this status.
+        /// <para/>ARUWP_STATUS_VIDEO_INITIALIZED: The video capture has been initialized, but the 
+        /// tracking has not been initialized. At this stage, markers can be added, tracking options 
+        /// can be changed. The access of native library is given to ARUWPController.cs and ARUWPMarker.cs
+        /// <para/>ARUWP_STATUS_CTRL_INITIALIZED: The video and tracking are both initialized, but the 
+        /// video pipeline is not started yet. At this stage, the access of native library is given to
+        /// ARUWPController.cs and ARUWPMarker.cs. StartFrameReaderAsync() should be called at this time.
+        /// <para/>ARUWP_STATUS_RUNNING: Video pipeline is running, new frame arrives, and tracking is
+        /// running. The access to the native library is given to the video thread (capture and tracking).
+        /// If StopFrameReaderAsync() is called, the status can be move back to ARUWP_STATUS_CTRL_INITIALIZED.
+        /// <para/>[read only]
+        /// </summary>
+        public int status = ARUWP.ARUWP_STATUS_CLEAN;
 
-    /// <summary>
-    /// Frame height in pixel, shared by all scripts. It is set by ARUWPVideo.cs. [read only]
-    /// </summary>
-    public int frameHeight = 0;
+        /// <summary>
+        /// Frame width in pixel, shared by all scripts. It is set by ARUWPVideo.cs. [read only]
+        /// </summary>
+        public int frameWidth = 0;
+
+        /// <summary>
+        /// Frame height in pixel, shared by all scripts. It is set by ARUWPVideo.cs. [read only]
+        /// </summary>
+        public int frameHeight = 0;
+
+
+
+        /// <summary>
+        /// Initail value of whether use camera parameter file or byte buffer to get camera calibration
+        /// information. [public use] [initialization only]
+        /// </summary>
+        public bool useCameraParamFile = true;
+
+        /// <summary>
+        /// Initial value of the camera calibration filename. The file must be put under
+        /// Assets/StreamingAssets/ folder. It is useful when useCameraParamFile == true. [public use] 
+        /// [initialization only]
+        /// </summary>
+        public string cameraParam = "hololens896x504.dat";
+
+        /// <summary>
+        /// The byte buffer to hold camera calibration content. It is useful when useCameraParamFile == 
+        /// false. The buffer should be set using SetCameraParamBuffer(). [internal use]
+        /// </summary>
+        private byte[] cameraParamBuffer = null;
+
+        /// <summary>
+        /// A Dictionary holding all the markers that are successfully added to the controller. The
+        /// key is the ID of the marker, and the value is ARUWPMarker object. [internal use]
+        /// </summary>
+        public static Dictionary<int, ARUWPMarker> markers = new Dictionary<int, ARUWPMarker>();
+
+        /// <summary>
+        /// The array of ARUWPMarker objects in the scene before add them to the controller. It is
+        /// used for initialization. [internal use]
+        /// </summary>
+        private ARUWPMarker[] unaddedMarkers = null;
+
+        /// <summary>
+        /// ARUWPVideo instance. [internal use]
+        /// </summary>
+        private ARUWPVideo videoManager = null;
+
+        /// <summary>
+        /// The threshold to make the source image black/white before detecting markers in the image.
+        /// At runtime, the threshold shoule be modified using SetVideoThreshold() function. 
+        /// [public use] [initialization only]
+        /// </summary>
+        [Range(0, 255)]
+        public int threshold = 100;
+
+        /// <summary>
+        /// The bordersize of the markers in this scene, expressed in percentage. Normally it is 0.25.
+        /// At runtime, it can be modified using SetBorderSize() function. [public use] 
+        /// [initialization only]
+        /// </summary>
+        [Range(0f, 0.5f)]
+        public float borderSize = 0.25f;
+
+
+        #region Public Enums
+
+        /// <summary>
+        /// ThresholdMode types, same definition as ARToolKit. [public use]
+        /// </summary>
+        public enum ThresholdMode
+        {
+            AR_LABELING_THRESH_MODE_MANUAL = ARUWP.AR_LABELING_THRESH_MODE_MANUAL,
+            AR_LABELING_THRESH_MODE_AUTO_MEDIAN = ARUWP.AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
+            AR_LABELING_THRESH_MODE_AUTO_OTSU = ARUWP.AR_LABELING_THRESH_MODE_AUTO_OTSU,
+            AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE = ARUWP.AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
+            AR_LABELING_THRESH_MODE_AUTO_BRACKETING = ARUWP.AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+        }
+
+        /// <summary>
+        /// LabelingMode types, same definiton as ARToolKit. [public use]
+        /// </summary>
+        public enum LabelingMode
+        {
+            AR_LABELING_WHITE_REGION = ARUWP.AR_LABELING_WHITE_REGION,
+            AR_LABELING_BLACK_REGION = ARUWP.AR_LABELING_BLACK_REGION
+        }
+
+        /// <summary>
+        /// PatternDetectionMode types, same definition as ARToolKit. [public use]
+        /// </summary>
+        public enum PatternDetectionMode
+        {
+            AR_TEMPLATE_MATCHING_COLOR = ARUWP.AR_TEMPLATE_MATCHING_COLOR,
+            AR_TEMPLATE_MATCHING_MONO = ARUWP.AR_TEMPLATE_MATCHING_MONO,
+            AR_MATRIX_CODE_DETECTION = ARUWP.AR_MATRIX_CODE_DETECTION,
+            AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX = ARUWP.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
+            AR_TEMPLATE_MATCHING_MONO_AND_MATRIX = ARUWP.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX
+        }
+
+        /// <summary>
+        /// MatrixCodeType types, same definition as ARToolKit. [public use]
+        /// </summary>
+        public enum MatrixCodeType
+        {
+            AR_MATRIX_CODE_3x3 = ARUWP.AR_MATRIX_CODE_3x3,
+            AR_MATRIX_CODE_3x3_PARITY65 = ARUWP.AR_MATRIX_CODE_3x3_PARITY65,
+            AR_MATRIX_CODE_3x3_HAMMING63 = ARUWP.AR_MATRIX_CODE_3x3_HAMMING63,
+            AR_MATRIX_CODE_4x4 = ARUWP.AR_MATRIX_CODE_4x4,
+            AR_MATRIX_CODE_4x4_BCH_13_9_3 = ARUWP.AR_MATRIX_CODE_4x4_BCH_13_9_3,
+            AR_MATRIX_CODE_4x4_BCH_13_5_5 = ARUWP.AR_MATRIX_CODE_4x4_BCH_13_5_5
+        }
+
+        /// <summary>
+        /// Image processing mode, same definition as ARToolKit. [public use]
+        /// </summary>
+        public enum ImageProcMode
+        {
+            AR_IMAGE_PROC_FIELD_IMAGE = ARUWP.AR_IMAGE_PROC_FIELD_IMAGE,
+            AR_IMAGE_PROC_FRAME_IMAGE = ARUWP.AR_IMAGE_PROC_FRAME_IMAGE
+        }
+
+        /// <summary>
+        /// Log level of native library, same definition as ARToolKit. [public use]
+        /// </summary>
+        public enum AR_LOG_LEVEL
+        {
+            AR_LOG_LEVEL_DEBUG = 0,
+            AR_LOG_LEVEL_INFO,
+            AR_LOG_LEVEL_WARN,
+            AR_LOG_LEVEL_ERROR,
+            AR_LOG_LEVEL_REL_INFO
+        }
+
     
+        #endregion
 
-    
-    /// <summary>
-    /// Initail value of whether use camera parameter file or byte buffer to get camera calibration
-    /// information. [public use] [initialization only]
-    /// </summary>
-    public bool useCameraParamFile = true;
+        /// <summary>
+        /// Initial value of ThresholdMode. At runtime, please use SetVideoThresholdMode() to modify
+        /// the value. [public use] [initialization only]
+        /// </summary>
+        public ThresholdMode thresholdMode = ThresholdMode.AR_LABELING_THRESH_MODE_MANUAL;
 
-    /// <summary>
-    /// Initial value of the camera calibration filename. The file must be put under
-    /// Assets/StreamingAssets/ folder. It is useful when useCameraParamFile == true. [public use] 
-    /// [initialization only]
-    /// </summary>
-    public string cameraParam = "hololens896x504.dat";
+        /// <summary>
+        /// Initial value of LabelingMode. At runtime please use SetLabelingMode() to modify the
+        /// value. [public use] [initialization only]
+        /// </summary>
+        public LabelingMode labelingMode = LabelingMode.AR_LABELING_BLACK_REGION;
 
-    /// <summary>
-    /// The byte buffer to hold camera calibration content. It is useful when useCameraParamFile == 
-    /// false. The buffer should be set using SetCameraParamBuffer(). [internal use]
-    /// </summary>
-    private byte[] cameraParamBuffer = null;
+        /// <summary>
+        /// Initial value of PatternDetectionMode. At runtime, please use SetPatternDetectionMode() to
+        /// modify the value. [public use] [initialization only]
+        /// </summary>
+        public PatternDetectionMode patternDetectionMode = PatternDetectionMode.AR_TEMPLATE_MATCHING_COLOR;
 
-    /// <summary>
-    /// A Dictionary holding all the markers that are successfully added to the controller. The
-    /// key is the ID of the marker, and the value is ARUWPMarker object. [internal use]
-    /// </summary>
-    public static Dictionary<int, ARUWPMarker> markers = new Dictionary<int, ARUWPMarker>();
+        /// <summary>
+        /// Initial value of MatrixCodeType. At runtime, please use SetMatrixCodeType() to modify the
+        /// value. [public use] [initialization only]
+        /// </summary>
+        public MatrixCodeType matrixCodeType = MatrixCodeType.AR_MATRIX_CODE_3x3;
 
-    /// <summary>
-    /// The array of ARUWPMarker objects in the scene before add them to the controller. It is
-    /// used for initialization. [internal use]
-    /// </summary>
-    private ARUWPMarker[] unaddedMarkers = null;
+        /// <summary>
+        /// Initial value of ImageProcMode. At runtime, please use SetImageProcMode() to modify the
+        /// value. [public use] [initialization only]
+        /// </summary>
+        public ImageProcMode imageProcMode = ImageProcMode.AR_IMAGE_PROC_FRAME_IMAGE;
 
-    /// <summary>
-    /// ARUWPVideo instance. [internal use]
-    /// </summary>
-    private ARUWPVideo videoManager = null;
+        /// <summary>
+        /// Set the camera parameter content buffer. This should be called before the camera parameters
+        /// are set to the native library. [public use]
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void SetCameraParamBuffer(byte[] buffer)
+        {
+            cameraParamBuffer = new byte[buffer.Length];
+            buffer.CopyTo(cameraParamBuffer, 0);
+        }
 
-    /// <summary>
-    /// The threshold to make the source image black/white before detecting markers in the image.
-    /// At runtime, the threshold shoule be modified using SetVideoThreshold() function. 
-    /// [public use] [initialization only]
-    /// </summary>
-    [Range(0, 255)]
-    public int threshold = 100;
+        /// <summary>
+        /// Retrieve the camera parameter content buffer. [public use]
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetCameraParamBuffer()
+        {
+            return cameraParamBuffer;
+        }
 
-    /// <summary>
-    /// The bordersize of the markers in this scene, expressed in percentage. Normally it is 0.25.
-    /// At runtime, it can be modified using SetBorderSize() function. [public use] 
-    /// [initialization only]
-    /// </summary>
-    [Range(0f, 0.5f)]
-    public float borderSize = 0.25f;
+        /// <summary>
+        /// Toggle the Unity inspector to show more initialization options. [editor use]
+        /// </summary>
+        public bool showOptions = false;
 
+        /// <summary>
+        /// Initial value for holding the text containing tracking frame rate information. It is useful
+        /// to indicate the runtime performance of the application. [public use]
+        /// </summary>
+        public Text trackFPS = null;
 
-    #region Public Enums
+        /// <summary>
+        /// Initial value for holding the text containing rendering frame rate information. It is useful
+        /// to indicate the runtime performance of the application. [public use]
+        /// </summary>
+        public Text renderFPS = null;
 
-    /// <summary>
-    /// ThresholdMode types, same definition as ARToolKit. [public use]
-    /// </summary>
-    public enum ThresholdMode {
-        AR_LABELING_THRESH_MODE_MANUAL = ARUWP.AR_LABELING_THRESH_MODE_MANUAL,
-        AR_LABELING_THRESH_MODE_AUTO_MEDIAN = ARUWP.AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
-        AR_LABELING_THRESH_MODE_AUTO_OTSU = ARUWP.AR_LABELING_THRESH_MODE_AUTO_OTSU,
-        AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE = ARUWP.AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
-        AR_LABELING_THRESH_MODE_AUTO_BRACKETING = ARUWP.AR_LABELING_THRESH_MODE_AUTO_BRACKETING
-    }
+        /// <summary>
+        /// The byte buffer of current frame image. [internal use]
+        /// </summary>
+        private byte[] frameData = null;
 
-    /// <summary>
-    /// LabelingMode types, same definiton as ARToolKit. [public use]
-    /// </summary>
-    public enum LabelingMode {
-        AR_LABELING_WHITE_REGION = ARUWP.AR_LABELING_WHITE_REGION,
-        AR_LABELING_BLACK_REGION = ARUWP.AR_LABELING_BLACK_REGION
-    }
+        /// <summary>
+        /// Signal to indicate that the tracking information was updated within the previous render frame.
+        /// [internal use]
+        /// </summary>
+        private bool signalTrackingUpdated = false;
 
-    /// <summary>
-    /// PatternDetectionMode types, same definition as ARToolKit. [public use]
-    /// </summary>
-    public enum PatternDetectionMode {
-        AR_TEMPLATE_MATCHING_COLOR = ARUWP.AR_TEMPLATE_MATCHING_COLOR,
-        AR_TEMPLATE_MATCHING_MONO = ARUWP.AR_TEMPLATE_MATCHING_MONO,
-        AR_MATRIX_CODE_DETECTION = ARUWP.AR_MATRIX_CODE_DETECTION,
-        AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX = ARUWP.AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX,
-        AR_TEMPLATE_MATCHING_MONO_AND_MATRIX = ARUWP.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX
-    }
+        /// <summary>
+        /// Signal to indicate that the initialization of video and tracking is triggered. It helps the 
+        /// auto-start of initialization after the application starts. [internal use]
+        /// </summary>
+        private bool signalInitTriggered = false;
 
-    /// <summary>
-    /// MatrixCodeType types, same definition as ARToolKit. [public use]
-    /// </summary>
-    public enum MatrixCodeType {
-        AR_MATRIX_CODE_3x3 = ARUWP.AR_MATRIX_CODE_3x3,
-        AR_MATRIX_CODE_3x3_PARITY65 = ARUWP.AR_MATRIX_CODE_3x3_PARITY65,
-        AR_MATRIX_CODE_3x3_HAMMING63 = ARUWP.AR_MATRIX_CODE_3x3_HAMMING63,
-        AR_MATRIX_CODE_4x4 = ARUWP.AR_MATRIX_CODE_4x4,
-        AR_MATRIX_CODE_4x4_BCH_13_9_3 = ARUWP.AR_MATRIX_CODE_4x4_BCH_13_9_3,
-        AR_MATRIX_CODE_4x4_BCH_13_5_5 = ARUWP.AR_MATRIX_CODE_4x4_BCH_13_5_5
-    }
+        /// <summary>
+        /// Average render frame period in millisecond for previous 50 frames, calculated when 
+        /// necessary. [internal use]
+        /// </summary>
+        private float renderDeltaTime = 0.0f;
 
-    /// <summary>
-    /// Image processing mode, same definition as ARToolKit. [public use]
-    /// </summary>
-    public enum ImageProcMode {
-        AR_IMAGE_PROC_FIELD_IMAGE = ARUWP.AR_IMAGE_PROC_FIELD_IMAGE,
-        AR_IMAGE_PROC_FRAME_IMAGE = ARUWP.AR_IMAGE_PROC_FRAME_IMAGE
-    }
-
-    /// <summary>
-    /// Log level of native library, same definition as ARToolKit. [public use]
-    /// </summary>
-    public enum AR_LOG_LEVEL {
-        AR_LOG_LEVEL_DEBUG = 0,
-        AR_LOG_LEVEL_INFO,
-        AR_LOG_LEVEL_WARN,
-        AR_LOG_LEVEL_ERROR,
-        AR_LOG_LEVEL_REL_INFO
-    }
-
-    #endregion
-
-    /// <summary>
-    /// Initial value of ThresholdMode. At runtime, please use SetVideoThresholdMode() to modify
-    /// the value. [public use] [initialization only]
-    /// </summary>
-    public ThresholdMode thresholdMode = ThresholdMode.AR_LABELING_THRESH_MODE_MANUAL;
-
-    /// <summary>
-    /// Initial value of LabelingMode. At runtime please use SetLabelingMode() to modify the
-    /// value. [public use] [initialization only]
-    /// </summary>
-    public LabelingMode labelingMode = LabelingMode.AR_LABELING_BLACK_REGION;
-
-    /// <summary>
-    /// Initial value of PatternDetectionMode. At runtime, please use SetPatternDetectionMode() to
-    /// modify the value. [public use] [initialization only]
-    /// </summary>
-    public PatternDetectionMode patternDetectionMode = PatternDetectionMode.AR_TEMPLATE_MATCHING_COLOR;
-
-    /// <summary>
-    /// Initial value of MatrixCodeType. At runtime, please use SetMatrixCodeType() to modify the
-    /// value. [public use] [initialization only]
-    /// </summary>
-    public MatrixCodeType matrixCodeType = MatrixCodeType.AR_MATRIX_CODE_3x3;
-
-    /// <summary>
-    /// Initial value of ImageProcMode. At runtime, please use SetImageProcMode() to modify the
-    /// value. [public use] [initialization only]
-    /// </summary>
-    public ImageProcMode imageProcMode = ImageProcMode.AR_IMAGE_PROC_FRAME_IMAGE;
-    
-    /// <summary>
-    /// Set the camera parameter content buffer. This should be called before the camera parameters
-    /// are set to the native library. [public use]
-    /// </summary>
-    /// <param name="buffer"></param>
-    public void SetCameraParamBuffer(byte[] buffer) {
-        cameraParamBuffer = new byte[buffer.Length];
-        buffer.CopyTo(cameraParamBuffer, 0);
-    }
-
-    /// <summary>
-    /// Retrieve the camera parameter content buffer. [public use]
-    /// </summary>
-    /// <returns></returns>
-    public byte[] GetCameraParamBuffer() {
-        return cameraParamBuffer;
-    }
-
-    /// <summary>
-    /// Toggle the Unity inspector to show more initialization options. [editor use]
-    /// </summary>
-    public bool showOptions = false;
-
-    /// <summary>
-    /// Initial value for holding the text containing tracking frame rate information. It is useful
-    /// to indicate the runtime performance of the application. [public use]
-    /// </summary>
-    public Text trackFPS = null;
-
-    /// <summary>
-    /// Initial value for holding the text containing rendering frame rate information. It is useful
-    /// to indicate the runtime performance of the application. [public use]
-    /// </summary>
-    public Text renderFPS = null;
-
-    /// <summary>
-    /// The byte buffer of current frame image. [internal use]
-    /// </summary>
-    private byte[] frameData = null;
-
-    /// <summary>
-    /// Signal to indicate that the tracking information was updated within the previous render frame.
-    /// [internal use]
-    /// </summary>
-    private bool signalTrackingUpdated = false;
-
-    /// <summary>
-    /// Signal to indicate that the initialization of video and tracking is triggered. It helps the 
-    /// auto-start of initialization after the application starts. [internal use]
-    /// </summary>
-    private bool signalInitTriggered = false;
-
-    /// <summary>
-    /// Average render frame period in millisecond for previous 50 frames, calculated when 
-    /// necessary. [internal use]
-    /// </summary>
-    private float renderDeltaTime = 0.0f;
-
-    /// <summary>
-    /// Average tracking frame period in millisecond for previous 50 frames, calculated when 
-    /// necessary. [internal use]
-    /// </summary>
-    private float trackDeltaTime = 0.0f;
+        /// <summary>
+        /// Average tracking frame period in millisecond for previous 50 frames, calculated when 
+        /// necessary. [internal use]
+        /// </summary>
+        private float trackDeltaTime = 0.0f;
 
 
-    /// <summary>
-    /// Retrieve the FPS of rendering. [public use]
-    /// </summary>
-    /// <returns>Number of frames per second</returns>
-    public float GetRenderFPS() {
-        return 1000.0f / renderDeltaTime;
-    }
+        /// <summary>
+        /// Retrieve the FPS of rendering. [public use]
+        /// </summary>
+        /// <returns>Number of frames per second</returns>
+        public float GetRenderFPS()
+        {
+            return 1000.0f / renderDeltaTime;
+        }
 
-    /// <summary>
-    /// Retrieve the FPS of tracking. [public use]
-    /// </summary>
-    /// <returns>Number of frames per second</returns>
-    public float GetTrackingFPS() {
-        return 1000.0f / trackDeltaTime;
-    }
+        /// <summary>
+        /// Retrieve the FPS of tracking. [public use]
+        /// </summary>
+        /// <returns>Number of frames per second</returns>
+        public float GetTrackingFPS()
+        {
+            return 1000.0f / trackDeltaTime;
+        }
 
 
 
-//#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_METRO
     [ComImport]
     [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

@@ -346,16 +346,14 @@ public class ARUWPMarker : MonoBehaviour{
         return latestTransMatrix;
     }
 
-
-
-//#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_METRO
 
 
     /// <summary>
     /// Unity Monobehavior function. ARUWPController, holoLensCamera are set here. Magic function
     /// is initialized. [internal use]
     /// </summary>
-    private void Start() { // Controlling part
+    private void Start() {
         controller = GetComponent<ARUWPController>();
         if (controller == null) {
             Debug.Log(TAG + ": not able to find ARUWPController");
@@ -385,7 +383,7 @@ public class ARUWPMarker : MonoBehaviour{
     /// If magic function is enabled, then a distortion transformation is applied on top
     /// of the tracking result. [internal use]
     /// </summary>
-    private void Update() { 
+    private void Update() {
         if (signalTrackingUpdated && id != -1) {
             Interlocked.Exchange(ref latestTrackingInfo, _info);
             if ( latestTrackingInfo.visible) {
