@@ -11,7 +11,7 @@ namespace TourBackend
     {
 
         protected string id { get; }
-        public object syncobject { get; }
+        public object syncobject { get; } // Object which syncs Unity and the Actor framework
 
         public SyncActor(string _id, object _syncobject)
         {
@@ -24,10 +24,8 @@ namespace TourBackend
             var msg = context.Message;
             switch (msg)
             {
-                case msg is WriteCurrentTourState w:
-
-
-
+                case msg is WriteCurrentTourState w: 
+                    syncobject.
                     break;
             }
             return Actor.Done;
