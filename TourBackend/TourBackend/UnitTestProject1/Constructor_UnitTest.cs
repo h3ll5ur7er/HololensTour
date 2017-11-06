@@ -6,6 +6,31 @@ using Proto;
 
 namespace TourBackend
 {
+
+    [TestClass]
+    public class ControlToSyncActorProtocol
+    {
+        [TestMethod]
+        public void SyncObject_must_be_correctly_constructed() { 
+
+            var dict = new Dictionary<string, CodeObject>();
+            var cd1 = new CodeObject("cd1", 1,new[]{ 1,2, 3}, new[]{4,5,6 });
+            var cd2 = new CodeObject("cd2", 1, new[] { 4, 7, 8 }, new[] { 1, 19, 3 }); // Just build to "random" CodeObjects
+
+            dict.Add("cd1",cd1);
+            dict.Add("cd2", cd2);
+
+            Assert.AreEqual(dict["cd1"],cd1); // Check that the dict contains the right CodeObjects
+            Assert.AreEqual(dict["cd2"],cd2);
+
+            var obj = new SyncObject("sync1", dict);
+
+            Assert.AreEqual(obj.dict["cd1"], cd1); // Check that the SyncObject contains the right CodeObjects
+            Assert.AreEqual(obj.dict["cd2"], cd2);
+            Assert.AreEqual(obj.objectid, "sync1");
+        }
+    }
+
     /// <summary>
     /// This class tests all classes which are defined in the ControlToRecognitionManagerProtocol.
     /// </summary>
