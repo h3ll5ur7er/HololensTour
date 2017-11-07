@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Proto;
+using System.Diagnostics;
 
 namespace TourBackend
 {
 
     public class SyncObject
     {
+        public Int64 timestamp;
+
         public object thisLock = new Object();
 
         public string objectid;
@@ -20,6 +23,10 @@ namespace TourBackend
         {
             objectid = _objectid;
             dict = _dict;
+        }
+
+        public void SetTimeStamp(Int64 _timestamp) {
+            this.timestamp = _timestamp;
         }
 
     }

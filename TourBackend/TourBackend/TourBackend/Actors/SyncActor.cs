@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Proto;
 using System.Reflection;
+using System.Threading;
+using System.Diagnostics;
 
 namespace TourBackend
 {
     public class SyncActor : IActor
     {
+
+        private Stopwatch stopwatch;
 
         protected string id { get; }
         public volatile SyncObject syncobject; // Object which syncs Unity and the Actor framework
@@ -18,6 +22,8 @@ namespace TourBackend
         {
             id = _id;
             syncobject = _syncobject;
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
         }
 
         public Task ReceiveAsync(IContext context)
@@ -26,10 +32,13 @@ namespace TourBackend
             switch (msg)
             {
                 case WriteCurrentTourState w:
+                    stopwatch.Stop();
                     lock (syncobject.thisLock)
                     {
+                        syncobject.SetTimeStamp(stopwatch.ElapsedMilliseconds);
                         syncobject.dict = new Dictionary<string, CodeObject>(w.dict);
                     }
+                    stopwatch.Start();
                     context.Sender.Tell(new RespondWriteCurrentTourState(w.id));
                     break;
             }
