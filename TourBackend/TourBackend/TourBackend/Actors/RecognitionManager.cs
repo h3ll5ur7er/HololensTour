@@ -11,12 +11,12 @@ namespace TourBackend
     {
 
         protected string Id { get; }
-        public Dictionary<PID,string> pidToID = new Dictionary<PID, string>();
-        public Dictionary<string, PID> idToPID = new Dictionary<string, PID>();
-
-        public RecognitionManager(string id)
+        public Dictionary<string,CodeObject> CodeObjectIDToCodeObject = new Dictionary<string, CodeObject>();
+        public Object video;
+        public RecognitionManager(string id, object _video)
         {
             Id = id;
+            video = _video;
         }
 
         public Task ReceiveAsync(IContext context)
@@ -24,10 +24,7 @@ namespace TourBackend
             var msg = context.Message;
             switch (msg)
             {
-                case RequestAllVirtualObjects r :
-                    r.senderPID.Tell(new RespondRequestAllVirtualObjects(r.senderPID,))
-                    break;
-
+                
             }
             return Actor.Done;
         }
