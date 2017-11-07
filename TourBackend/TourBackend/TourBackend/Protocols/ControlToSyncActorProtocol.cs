@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Proto;
+using System.Diagnostics;
 
 namespace TourBackend
 {
 
     public class SyncObject
     {
+        public Int64 timestamp;
 
-        private Object thisLock = new Object();
+        public object thisLock = new Object();
 
         public string objectid;
         public Dictionary<string, CodeObject> dict;
@@ -22,7 +25,14 @@ namespace TourBackend
             dict = _dict;
         }
 
+        public void SetTimeStamp(Int64 _timestamp) {
+            this.timestamp = _timestamp;
+        }
+
     }
+
+    // Encapsulates the current state of an Object 
+    // This definition is subject to fluent change
 
     public class CodeObject {
 
@@ -39,6 +49,8 @@ namespace TourBackend
         }
     }
 
+    // Request to update the SyncObject with the current TourState
+
     public class WriteCurrentTourState
     {
 
@@ -50,7 +62,10 @@ namespace TourBackend
             id = _id;
             dict = _dict;
         }
+
     }
+
+    // Respond that the updating of the SyncObject has been successful
 
     public class RespondWriteCurrentTourState {
 
