@@ -26,11 +26,11 @@ namespace TourBackend
             switch (msg)
             {
                 case WriteCurrentTourState w:
-                    syncobject.dict = new Dictionary<string, CodeObject>(w.dict);
+                    lock (syncobject)
+                    {
+                        syncobject.dict = new Dictionary<string, CodeObject>(w.dict);
+                    }
                     context.Sender.Tell(new RespondWriteCurrentTourState(w.id));
-                    break;
-                case SetSyncObject s:
-                    syncobject = s.sync;
                     break;
             }
             return Actor.Done;
