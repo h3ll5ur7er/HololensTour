@@ -11,58 +11,67 @@ namespace TourBackend
     public class RecognititonManager_UnitTest
     {
         /// <summary>
-        /// The idea here is to test that if the conrtrolActor asks the recognition manager
-        /// to get all virtual objects that are shown in the screen of the hololens
-        /// that the recognition manager returns a dictionary to the control Actor with all the 
-        /// virtual objects listed in there with their PID and their creating message ID
+        /// The idea here is to test that if the conrtrolActor asks the recognitionManager
+        /// to get all CodeObjects, that are in the current tourState, the controlActor gets a dictionary
+        /// back. The dictionary consists of an CodeObjectID as a key and the CodeObject itself as a value.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task ControlAsksRecognitionManagerRequestAllVirtualObjects()
-        // for the RequestAsync method call we need firstly an async keyword in the declaration
+        public async Task Control_Asks_RecognitionManager_RequestAllVirtualObjects()
+        // for the RequestAsync method call we need firstly an async keyword in the declaration of the Task
         {
-            // initialize the Control Actor
-
-            var _propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", null, null));
-            var _pidControlActor = Actor.Spawn(_propsControlActor);
-            // initialize the recognition manager
-            var _propsRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
-            var _pidRecognitionManager = Actor.Spawn(_propsRecognitionManager);
-            // the control Actor should tell to the recognition manager to create a virtual object
-            // with the name "TestMarker". First initialize the message for usability
-            var _msg = new RequestAllVirtualObjects("Create 1", _pidControlActor, "TestMarker",TimeSpan.FromSeconds(1));
-            _pidRecognitionManager.Tell(_msg);
-            // reply is here to get the dictionary out of the actor...just for testing
-            // the syntax is the following:
-            // var replyObject = pidMessageReceiver.RequestAsync<ObjectType which I wanne get in the response>(message);
-            // RequestAsync is here to block the sender until he get the response. Other syntax would be to only
-            // have Request but then we have the problem that the sender is not blocked till he gets a response
-            // the await keyword we need for the RequestAsync to be really asynchronous
-            var reply = await _pidRecognitionManager.RequestAsync<Dictionary<string,PID>>(_msg, TimeSpan.FromSeconds(1));
-            // here we actually test if the RecognitionManager made a new actor and put this new
-            // actor into the dictionary with a keyValuePair "stringID : pidFromTestMarker"
-            Assert.AreEqual(reply.ContainsKey("TestMarker"),true);            
+            // these objects we need to create the ControlActor and the RecognitionManager and they do not
+            // have any further functionality
+            SyncObject _testSyncObject = new SyncObject("", null);
+            object _testVideo = new object();
+            // here we create the testControlActor
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, _testVideo));
+            var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
+            // here we create the TestRecognitionManager
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _testVideo));
+            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
+            // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
+            // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 
+            // the testControlActor. Without these create Statements we could not test this unit properly
+            // cause we need to be sure that the objects which have been created are the ones in the dictionary
+            // and not something else or more or less..
+            // CodeObject 1
+            int[] position1 = { 1, 2, 3 };
+            int[] rotation1 = { 2, 2, 4 };
+            var _codeObject1 = new CodeObject("1", 0, position1, rotation1);
+            // CodeObject 2
+            int[] position2 = { 0, 2, 4 };
+            int[] rotation2 = { 2, 3, 5 };
+            var _codeObject2 = new CodeObject("2", 1, position2, rotation2);
+            // here we say to the TestRecognitionManager to create first one CodeObject with the codeObjectID = 1
+            var msg1 = new CreateNewVirtualObject("Create1", _pidTestControlActor, "1");
+            _pidTestRecognitionManager.Tell(msg1);
+            // and here the second. 
+            var msg2 = new CreateNewVirtualObject("Create2", _pidTestControlActor, "2");
+            _pidTestRecognitionManager.Tell(msg2);
+            // here we really do now the request from the testControlActor to the recognitionManager and we store
+            // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
+            // which contains of a dictionary and a messageID to know to which Request the Respond was
+            var msg3 = new RequestAllVirtualObjects("Request1", _pidTestControlActor, TimeSpan.FromSeconds(1));
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg3, TimeSpan.FromSeconds(1));
+            // here we actually test if the Call "RequestAllVirtualObjects" can what we intended
+            // first we check if the response have the same messageID as the request had
+            Assert.AreEqual(response.messageID, "Request1");
+            // then we check if the dictionary contains the key 1 and 2 since we inserted two CodeObjects of with this ID's
+            Assert.AreEqual(response.CodeObjectIDToCodeObject.ContainsKey("1"), true);
+            Assert.AreEqual(response.CodeObjectIDToCodeObject.ContainsKey("2"), true);
+            // here we check if the response's dictionary contains exactly what wi inserted before
+            CodeObject value1 = response.CodeObjectIDToCodeObject["1"];
+            // with this statement we get the value to the key in the brackets. this is dictionary syntax
+            CodeObject value2 = response.CodeObjectIDToCodeObject["2"];
+            Assert.AreEqual(value1, _codeObject1);
+            Assert.AreEqual(value2, _codeObject2);
         }
-        
 
         [TestMethod]
         public void ControlAsksRecognitionManagerToCreateVirtualObject()
         {
             // Do some testing here
-            // erstelle actors hier
-            // message von control zu reco
-
-            // initialize the Control Actor
-            var propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", null, null));
-            var pidControlActor = Actor.Spawn(propsControlActor);
-            // initialize the recognition manager
-            var propsRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
-            var pidRecognitionManager = Actor.Spawn(propsRecognitionManager);
-            // the control Actor should tell to the recognition manager to create a virtual object
-            // with the name "TestMarker" first initialize the message
-            var msg = new CreateNewVirtualObject("Create 1", pidControlActor, "TestMarker");
-            pidRecognitionManager.Tell(msg);
-            // to finish but this is a complex test
         }
     }
 }

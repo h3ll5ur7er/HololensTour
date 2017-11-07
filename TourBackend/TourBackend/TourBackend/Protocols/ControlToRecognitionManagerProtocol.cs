@@ -261,12 +261,15 @@ namespace TourBackend
     // here we need another variable time, meaning if it would take 
     // too long to get all the informations from all GameObjectActors
     // we can then easily define a behavior like throwing an error or sth else
+    // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
+    // in form of a dictionary with a key CodeObjectID and a value CodeObject itself
     public class RespondRequestAllVirtualObjects
     {
         public PID senderPID;
         public string messageID;
         public string targetActor;
         public TimeSpan time;
+        public Dictionary<string, CodeObject> CodeObjectIDToCodeObject = new Dictionary<string, CodeObject>();
 
         public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, TimeSpan _time)
         {
