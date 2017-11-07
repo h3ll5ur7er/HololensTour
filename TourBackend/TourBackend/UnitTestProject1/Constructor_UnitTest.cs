@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using Proto;
+using System.Threading;
 
 namespace TourBackend
 {
@@ -30,6 +31,7 @@ namespace TourBackend
             Assert.AreEqual(obj.objectid, "sync1");
         }
     }
+
 
     /// <summary>
     /// This class tests all classes which are defined in the ControlToRecognitionManagerProtocol.

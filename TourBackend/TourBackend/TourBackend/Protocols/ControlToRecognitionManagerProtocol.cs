@@ -115,6 +115,7 @@ namespace TourBackend
             targetActor = _targetActor;
         }
     }
+
     // here we need another variable time, meaning if it would take 
     // too long to get all the informations from all GameObjectActors
     // we can then easily define a behavior like throwing an error or sth else
