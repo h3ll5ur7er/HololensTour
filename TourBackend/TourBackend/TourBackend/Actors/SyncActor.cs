@@ -32,13 +32,11 @@ namespace TourBackend
             switch (msg)
             {
                 case WriteCurrentTourState w:
-                    stopwatch.Stop();
                     lock (syncobject.thisLock)
                     {
                         syncobject.SetTimeStamp(stopwatch.ElapsedMilliseconds);
                         syncobject.dict = new Dictionary<string, CodeObject>(w.dict);
                     }
-                    stopwatch.Start();
                     context.Sender.Tell(new RespondWriteCurrentTourState(w.id));
                     break;
             }
