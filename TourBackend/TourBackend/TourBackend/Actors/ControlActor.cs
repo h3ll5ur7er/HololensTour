@@ -8,13 +8,18 @@ using System.Threading;
 
 namespace TourBackend
 {
+
+    // Attention: This Actor is subject to change!
+    // Neither the constructors nor any other function is guaranteed to stay unchanged!
+
     public class ControlActor : IActor
     {
         public string id { get; }
         public SyncObject sync;
-        public Object video;
+        public Object video; // This field will *certainly* change
         public PID recognitionManager;
         public PID syncActor;
+        // More managed PIDs are to follow
 
         public ControlActor(string _id, SyncObject _sync, Object _video)
         {
