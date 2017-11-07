@@ -22,7 +22,8 @@ namespace TourBackend
         // for the RequestAsync method call we need firstly an async keyword in the declaration
         {
             // initialize the Control Actor
-            var _propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor"));
+
+            var _propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", null, null));
             var _pidControlActor = Actor.Spawn(_propsControlActor);
             // initialize the recognition manager
             var _propsRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
@@ -52,7 +53,7 @@ namespace TourBackend
             // message von control zu reco
 
             // initialize the Control Actor
-            var propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor"));
+            var propsControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", null, null));
             var pidControlActor = Actor.Spawn(propsControlActor);
             // initialize the recognition manager
             var propsRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));

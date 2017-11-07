@@ -35,6 +35,8 @@ namespace TourBackend
 
             var reply = await pidSyncActor1.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("dab", dict), TimeSpan.FromSeconds(1));
 
+            pidSyncActor1.Stop();
+
             CollectionAssert.AreEqual((System.Collections.ICollection)obj.dict, (System.Collections.ICollection)dict);
 
         }
@@ -71,6 +73,8 @@ namespace TourBackend
 
             var timestamp2 = obj.timestamp;
 
+            pidSyncActor1.Stop();
+
             Assert.AreNotEqual(timestamp1,timestamp2);
 
         }
@@ -96,6 +100,8 @@ namespace TourBackend
             var pidSyncActor1 = Actor.Spawn(propsSyncActor1);
 
             var reply = await pidSyncActor1.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("req1", dict), TimeSpan.FromSeconds(1)); // Expect Answer
+
+            pidSyncActor1.Stop();
 
             Assert.AreEqual(reply.id, "req1");
 
