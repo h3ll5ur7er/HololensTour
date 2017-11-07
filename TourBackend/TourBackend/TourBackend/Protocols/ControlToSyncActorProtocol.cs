@@ -10,6 +10,8 @@ namespace TourBackend
 
     public class SyncObject
     {
+        public object thisLock = new Object();
+
         public string objectid;
         public Dictionary<string, CodeObject> dict;
 

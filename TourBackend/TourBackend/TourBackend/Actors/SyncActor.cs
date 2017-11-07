@@ -26,7 +26,7 @@ namespace TourBackend
             switch (msg)
             {
                 case WriteCurrentTourState w:
-                    lock (syncobject)
+                    lock (syncobject.thisLock)
                     {
                         syncobject.dict = new Dictionary<string, CodeObject>(w.dict);
                     }
