@@ -10,9 +10,6 @@ namespace TourBackend
 
     public class SyncObject
     {
-
-        private Object thisLock = new Object();
-
         public string objectid;
         public Dictionary<string, CodeObject> dict;
 
@@ -69,16 +66,6 @@ namespace TourBackend
             id = _id;
         }
 
-    }
-
-    public class SetSyncObject {
-        public string id;
-        public SyncObject sync;
-
-        public SetSyncObject(string _id, ref SyncObject _sync) {
-            id = _id;
-            sync = _sync;
-        }
     }
 
 }
