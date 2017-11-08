@@ -1,21 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace TourBackend
 {
 
     public class GetTourState : MonoBehaviour
     {
-        SyncObject syncObject;
+        public SyncObject syncObject;
         // Use this for initialization
-        void Start()
+        public void Start()
         {
             //Initialisierung SyncObject
-            syncObject = GetComponent<SyncObject>();
+            syncObject = new SyncObject();
+            //Reference syncObject
+            //syncObject = GetComponent<SyncObject>();
         }
 
         // Update is called once per frame
-        void Update()
+        public void Update()
         {
             //GetCopyOfDictionary
             //ToDo: Test if lock is free
