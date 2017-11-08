@@ -268,22 +268,21 @@ namespace TourBackend
         public PID senderPID;
         public string messageID;
         public string targetActor;
-        public TimeSpan time;
-        public Dictionary<string, CodeObject> CodeObjectIDToCodeObject = new Dictionary<string, CodeObject>();
+        public Dictionary<string, CodeObject> codeObjectIDToCodeObject;
 
-        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, TimeSpan _time)
+        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, Dictionary<string,CodeObject> _dict)
         {
             senderPID = _senderPID;
             messageID = _messageID;
-            time = _time;
+            codeObjectIDToCodeObject = _dict;
         }
 
-        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, string _targetActor, TimeSpan _time)
+        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, Dictionary<string, CodeObject> _dict, string _targetActor)
         {
             senderPID = _senderPID;
             messageID = _messageID;
+            codeObjectIDToCodeObject = _dict;
             targetActor = _targetActor;
-            time = _time;
         }
     }
     public class RespondKillVirtualObject
