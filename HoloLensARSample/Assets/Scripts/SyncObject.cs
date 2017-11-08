@@ -5,37 +5,37 @@ using UnityEngine;
 namespace TourBackend
 {
 
-
-    public class FullObject
+    public class SyncObject
     {
-        /*mediaid
-        1 = texture
-        2 = 3D mesh
-        3 = video
-       ...erweiterbar
-       */
+
+        private Object thisLock = new Object();
+
+        public string objectid;
+        public Dictionary<string, CodeObject> dict;
+
+        //Basic Konstruktor 
+        public SyncObject(string _objectid, Dictionary<string, CodeObject> _dict)
+        {
+            objectid = _objectid;
+            dict = _dict;
+        }
+
+    }
+
+    public class CodeObject
+    {
+
         public string objectid;
         public int mediaid;
         public int[] position;
         public int[] rotation;
 
-        //Basic Konstruktor 
-        public FullObject(string _objectid, int _mediaid, int[] _position, int[] _rotation, string _type)
+        public CodeObject(string _objectid, int _mediaid, int[] _position, int[] _rotation)
         {
             objectid = _objectid;
             mediaid = _mediaid;
             position = _position;
             rotation = _rotation;
         }
-
     }
-
-
-    //Dictionary with ID and Object with Mesh, position, rotation, type
-    public Dictionary<int, FullObject> dict = new Dictionary<int, FullObject>();
-
-
-
-
-
 }
