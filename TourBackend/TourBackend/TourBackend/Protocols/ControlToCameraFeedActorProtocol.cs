@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace TourBackend
 {
     public class CameraFeedSyncObject {
+
         public Windows.Graphics.Imaging.SoftwareBitmap bitmap;
         public string id;
         public object thisLock = new Object();

@@ -16,12 +16,12 @@ namespace TourBackend
     {
         public string id { get; }
         public SyncObject sync;
-        public Object video; // This field will *certainly* change
+        public CameraFeedSyncObject video; // This field will *certainly* change
         public PID recognitionManager;
         public PID syncActor;
         // More managed PIDs are to follow
 
-        public ControlActor(string _id, SyncObject _sync, Object _video)
+        public ControlActor(string _id, SyncObject _sync, CameraFeedSyncObject _video)
         {
             id = _id;
             sync = _sync;
@@ -39,7 +39,7 @@ namespace TourBackend
         // 1: RecognitionManager
         // 2: SyncActor
 
-        public ControlActor(string _id, SyncObject _sync, Object _video, ref PID _debugPID, int debug)
+        public ControlActor(string _id, SyncObject _sync, CameraFeedSyncObject _video, ref PID _debugPID, int debug)
         {
             id = _id;
             sync = _sync;
