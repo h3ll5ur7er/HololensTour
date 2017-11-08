@@ -94,6 +94,7 @@
     <Compile Include="Actors\SpeechRecognitionActor.cs" />
     <Compile Include="Actors\MicrophoneInterfaceActor.cs" />
     <Compile Include="Actors\SyncActor.cs" />
+    <Compile Include="Protocols\ControlToCameraFeedActorProtocol.cs" />
     <Compile Include="Protocols\ControlToRecognitionManagerProtocol.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

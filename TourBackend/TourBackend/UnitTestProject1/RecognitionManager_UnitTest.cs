@@ -23,12 +23,11 @@ namespace TourBackend
             // these objects we need to create the ControlActor and the RecognitionManager and they do not
             // have any further functionality
             SyncObject _testSyncObject = new SyncObject("", null);
-            object _testVideo = new object();
             // here we create the testControlActor
-            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, _testVideo));
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
             var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
             // here we create the TestRecognitionManager
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _testVideo));
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
             // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 

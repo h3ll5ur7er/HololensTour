@@ -15,7 +15,6 @@ namespace TourBackend
         public async Task ControlActor_must_correctly_initialize_SyncActor_which_works()
         {
             var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
-            var vidobj = new Object();
             var debugPID = new PID();
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
@@ -23,7 +22,7 @@ namespace TourBackend
             // 1: RecognitionManager
             // 2: SyncActor
 
-            var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, vidobj, ref debugPID, 2));
+            var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, null, ref debugPID, 2));
             var pidctrl = Actor.Spawn(propsctrl);
 
             var dict = new Dictionary<string, CodeObject>();
