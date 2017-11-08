@@ -46,8 +46,8 @@ namespace TourBackend
 
         public NewFrameArrived(string _id, Windows.Graphics.Imaging.SoftwareBitmap _bitmap)
         {
-            id = _id;
-            bitmap = _bitmap;
+                id = _id;
+                bitmap = _bitmap;
         }
     }
 
