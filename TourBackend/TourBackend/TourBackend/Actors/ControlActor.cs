@@ -19,6 +19,7 @@ namespace TourBackend
         public CameraFeedSyncObject video; // This field will *certainly* change
         public PID recognitionManager;
         public PID syncActor;
+        public PID cameraFeedSyncActor;
         // More managed PIDs are to follow
 
         public ControlActor(string _id, SyncObject _sync, CameraFeedSyncObject _video)
@@ -68,7 +69,8 @@ namespace TourBackend
             var msg = context.Message;
             switch (msg)
             {
-
+                case NewFrameArrived n:
+                    break;
             }
             return Actor.Done;
         }

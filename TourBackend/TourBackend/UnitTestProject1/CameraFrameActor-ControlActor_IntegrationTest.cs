@@ -15,13 +15,14 @@ namespace TourBackend
     public class UnitTest1
     {
         [TestMethod]
-        public async Task A_single_frame_needs_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_UpdateFunction()
+        public async Task A_single_frame_needs_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_Frames()
         {
             SoftwareBitmap testframe;
             CameraFeedSyncObject test = new CameraFeedSyncObject("new");
             object msg = new Object();
             var pidsyncactor = new PID();
 
+            //This dict will have to be updated to be true to the frame
             var dict = new Dictionary<string, CodeObject>();
             var cd1 = new CodeObject("cd1", 1, new[] { 1, 2, 3 }, new[] { 4, 5, 6 });
             var cd2 = new CodeObject("cd2", 1, new[] { 4, 7, 8 }, new[] { 1, 19, 3 }); // Just build two "random" CodeObjects
@@ -45,16 +46,17 @@ namespace TourBackend
             Stream testfile = File.OpenRead(path);
             testframe = await Utils.CreateTestFrame(testfile);
 
-            test.bitmap = testframe;
-            test.timestamp = 110100010;
+            lock (test.thisLock)
+            {
+                test.bitmap = testframe;
+                test.timestamp = 110100010;
+            }
             // The timestamp is also the message id
 
             test.UpdateFrame();
 
-            if (msg.GetType() == typeof(NewFrameArrived))
-            {
-                Assert.AreEqual(((NewFrameArrived)msg).id, "110100010");
-            }
+            Thread.Sleep(1000);
+            CollectionAssert.AreEqual(syncobj.dict, dict);
         }
     }
 }

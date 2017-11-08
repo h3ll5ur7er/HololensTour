@@ -201,6 +201,7 @@
     <Compile Include="ControlActor_UnitTest.cs" />
     <Compile Include="Constructor_UnitTest.cs" />
     <Compile Include="SyncActor_UnitTest.cs" />
+    <Compile Include="CameraFrameActor-ControlActor_IntegrationTest.cs" />
     <Compile Include="VirtualObjectActor_UnitTest.cs" />
     <Compile Include="VisualizationActor_UnitTest.cs" />
   </ItemGroup>

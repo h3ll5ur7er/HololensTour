@@ -108,8 +108,11 @@ namespace TourBackend
             Stream testfile = File.OpenRead(path);
             testframe = await Utils.CreateTestFrame(testfile);
 
-            test.bitmap = testframe;
-            test.timestamp = 110100010;
+            lock (test.thisLock)
+            {
+                test.bitmap = testframe;
+                test.timestamp = 110100010;
+            }
             // The timestamp is also the message id
 
             test.UpdateFrame();
