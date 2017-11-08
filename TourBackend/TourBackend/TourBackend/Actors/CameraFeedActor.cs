@@ -9,12 +9,13 @@ namespace TourBackend
 {
     public class CameraFeedActor : IActor
     {
+        public string id { get; }
+        public CameraFeedSyncObject sync;   
 
-        protected string Id { get; }
-
-        public CameraFeedActor(string id)
+        public CameraFeedActor(string _id, CameraFeedSyncObject _sync)
         {
-            Id = id;
+            id = _id;
+            sync = _sync;
         }
 
         public Task ReceiveAsync(IContext context)
