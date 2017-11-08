@@ -37,9 +37,13 @@ namespace TourBackend
             Assert.AreEqual(dict["cd2"], cd2);
 
             var reply = await debugPID.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("dab", dict), TimeSpan.FromSeconds(1));
+            // Note: in any context it does not matter for the behaviour
+            // of the actor which receives a message where said message was sent from.
+            // The sender only determines where the response is sent to.
+
 
             debugPID.Stop();
-            pidctrl.Stop();
+            pidctrl.Stop(); // Cleanup, just to be safe.
 
             CollectionAssert.AreEqual((System.Collections.ICollection)syncobj.dict, (System.Collections.ICollection)dict);
         }

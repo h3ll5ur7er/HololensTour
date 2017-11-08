@@ -16,7 +16,7 @@ namespace TourBackend
 
             var dict = new Dictionary<string, CodeObject>();
             var cd1 = new CodeObject("cd1", 1,new[]{ 1,2, 3}, new[]{4,5,6 });
-            var cd2 = new CodeObject("cd2", 1, new[] { 4, 7, 8 }, new[] { 1, 19, 3 }); // Just build to "random" CodeObjects
+            var cd2 = new CodeObject("cd2", 1, new[] { 4, 7, 8 }, new[] { 1, 19, 3 }); // Just build two "random" CodeObjects
 
             dict.Add("cd1",cd1);
             dict.Add("cd2", cd2);
