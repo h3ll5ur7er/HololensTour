@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Proto;
+using Windows.Graphics.Imaging;
 
 namespace TourBackend
 {
@@ -12,6 +13,8 @@ namespace TourBackend
         public string id { get; }
         public CameraFeedSyncObject sync;
         public PID ctrlActor;
+        public SoftwareBitmap latestBitmap;
+        public Int64 latestTimestamp;
 
         public CameraFeedActor(string _id, CameraFeedSyncObject _sync, PID _ctrlActor)
         {
@@ -34,7 +37,12 @@ namespace TourBackend
         {
             if (true) // Condition here is to be defined... might make sense to only process every second frame or so
             {
-                ctrlActor.Tell(new NewFrameArrived(sync.timestamp.ToString(), sync.bitmap));
+                lock (sync.thisLock)
+                {
+                    latestBitmap = sync.bitmap; // SoftwareBitmap.Copy(sync.bitmap); Need to think about safety of passing bitmap as reference
+                    latestTimestamp = sync.timestamp;
+                }
+                ctrlActor.Tell(new NewFrameArrived(latestTimestamp.ToString(), latestBitmap));
             }
         }
 
