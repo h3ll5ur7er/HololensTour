@@ -12,7 +12,7 @@ namespace TourBackend
         public void Start()
         {
             //Initialisierung SyncObject
-            syncObject = new SyncObject();
+            syncObject = new SyncObject("sync_id", new Dictionary<string, CodeObject>(), 10);
             //Reference syncObject
             //syncObject = GetComponent<SyncObject>();
         }

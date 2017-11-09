@@ -12,12 +12,14 @@ namespace TourBackend
 
         public string objectid;
         public Dictionary<string, CodeObject> dict;
+        public System.Int64 timestamp;
 
         //Basic Konstruktor 
-        public SyncObject(string _objectid, Dictionary<string, CodeObject> _dict)
+        public SyncObject(string _objectid, Dictionary<string, CodeObject> _dict, System.Int64 _timestamp)
         {
             objectid = _objectid;
             dict = _dict;
+            timestamp = _timestamp;
         }
 
     }

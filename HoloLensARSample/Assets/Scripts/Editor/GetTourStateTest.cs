@@ -3,12 +3,13 @@ using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace TourBackend
 {
     public class GetTourStateTest
     {
- 
+
         [Test]
         public void GetTourState_initialize_empty_SyncObject_correctly()
         {
@@ -16,22 +17,15 @@ namespace TourBackend
             //Testobject
             //GameObject test = new GameObject();
             //Create getTourState object
-            
-            GetTourState getTourState = new GameObject().GetComponent<GetTourState>();
-            
-            if (getTourState)
-            {
-                //Compare if the object is as expected empty
-                Assert.AreEqual(getTourState.syncObject.objectid, "");
-                Assert.AreEqual(getTourState.syncObject.dict.Count, 0);
-                Assert.AreEqual(getTourState.syncObject.timestamp, 0);
-            }
-            else
-            {
-                Debug.Log("why the fuck doesn't work!");
-                Assert.AreEqual(0, 1);
-            }
-            
+
+            GetTourState getTourState = new GameObject().AddComponent<GetTourState>();
+            getTourState.Start();
+
+            //Compare if the object is as expected empty
+            Assert.AreEqual(getTourState.syncObject.objectid, "sync_id");
+            CollectionAssert.AreEqual(getTourState.syncObject.dict, new Dictionary<string, CodeObject>());
+            Assert.AreEqual(getTourState.syncObject.timestamp, 10);
+
         }
 
         // A UnityTest behaves like a coroutine in PlayMode
