@@ -8,11 +8,14 @@ namespace TourBackend
     public class GetTourState : MonoBehaviour
     {
         public SyncObject syncObject;
+        public Dictionary<string, CodeObject> CopyOfDict;
+        public System.Int64 lasttimestamp;
         // Use this for initialization
         public void Start()
         {
             //Initialisierung SyncObject
-            syncObject = new SyncObject("sync_id", new Dictionary<string, CodeObject>(), 10);
+            lasttimestamp = 10;
+            syncObject = new SyncObject("sync_id", new Dictionary<string, CodeObject>(), lasttimestamp);
             //Reference syncObject
             //syncObject = GetComponent<SyncObject>();
         }
@@ -22,32 +25,38 @@ namespace TourBackend
         {
             //GetCopyOfDictionary
             //ToDo: Test if lock is free
-            Dictionary<string, CodeObject> CopyOfDict = syncObject.dict;
-            //ReadDictionaryData
-            foreach(string objectid in CopyOfDict.Keys)
-            {
-                //CodeObject with current key
-                CodeObject obj = CopyOfDict[objectid];
-                //TestTypeOfData
-                switch (obj.mediaid)
-                {
-                    case 1:
-                        //instantiate Texture, set position and rotation
-                        break;
-                    case 2:
-                        //instantiate 3D model, set position and rotation
-                        break;
-                    case 3:
-                        //instantiate video, set position and rotation
-                        break;
-                    default:
-                        //media without mediaid -> error
-                        break;
 
+
+            //Only copy if timestamp changed
+            if (syncObject.timestamp != lasttimestamp)
+            {
+                lasttimestamp = syncObject.timestamp;
+                CopyOfDict = syncObject.dict;
+                //ReadDictionaryData
+                foreach (string objectid in CopyOfDict.Keys)
+                {
+                    //CodeObject with current key
+                    CodeObject obj = CopyOfDict[objectid];
+                    //TestTypeOfData
+                    switch (obj.mediaid)
+                    {
+                        case 1:
+                            //instantiate Texture, set position and rotation
+                            break;
+                        case 2:
+                            //instantiate 3D model, set position and rotation
+                            break;
+                        case 3:
+                            //instantiate video, set position and rotation
+                            break;
+                        default:
+                            //media without mediaid -> error
+                            break;
+
+
+                    }
 
                 }
-               
-
             }
 
 

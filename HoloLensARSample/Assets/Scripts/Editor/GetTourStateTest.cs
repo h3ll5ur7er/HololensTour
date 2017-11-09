@@ -28,6 +28,32 @@ namespace TourBackend
 
         }
 
+        [Test]
+        public void GetTourState_lasttimestamp_gets_updated_to_new_timestamp_of_SyncObject()
+        {
+            //Initiate GetTourState
+            GetTourState getTourState = new GameObject().AddComponent<GetTourState>();
+            //Create SyncObject
+            getTourState.Start();
+            //initial timestamp
+            System.Int64 inititialTimestamp = 10;
+            //Check old time Stamp
+            Assert.AreEqual(getTourState.syncObject.timestamp, inititialTimestamp);
+            //Update GetTourState
+            getTourState.Update();
+            //Check if copy has right timestamp
+            Assert.AreEqual(getTourState.lasttimestamp, inititialTimestamp);
+            //update timestamp
+            System.Int64 newTimestamp = 12;
+            //Change timestamp
+            getTourState.syncObject.timestamp = newTimestamp;
+            //Update GetTourState
+            getTourState.Update();
+            //Check if timestamp is changed on syncObject
+            Assert.AreEqual(getTourState.lasttimestamp, newTimestamp);
+
+        }
+
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]
