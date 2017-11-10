@@ -9,56 +9,16 @@ namespace TourBackend
 {
     /* 
      * The idea here is to define messageTypes for the communication between the actors.
-     * We construct them always with a _pid = (_pid from the sender) such that we can always
-     * have the information which actor has sent the message. And to identify the specific
-     * message instance we also need a variable _messageID = _id (this is useful for 
-     * debugging. 
-     * In a second constructor we have the chance to give an additional target-string
-     * where the message should go, meaning if the message should go over more than one 
-     * actor level we can still specify the receiver of the message...
+     * To identify the specific message instance we also need a variable _messageID = _id (this is useful for debugging)
+     * and to have the control of the outgoing and incoming messages...
     */
 
-    /* Now we first define all the tasks */
+    /* Now we first define all the commands from the ControlActor to the RecognitionManager */
 
-    
-    public class StartVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public StartVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public StartVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
-    public class StopVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public StopVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public StopVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
+    /// <summary>
+    /// with this message we want to be able to set an VirtualObject active meaning that it his internal state
+    /// isActive is changed to true whatever it was before
+    /// </summary>
     public class SetActiveVirtualObject
     {
         public string messageID;
@@ -70,6 +30,11 @@ namespace TourBackend
             toBeActiveVirtualObjectID = _toBeActiveVirtualObjectID;
         }
     }
+
+    /// <summary>
+    /// with this message we want to be able to set an VirtualObject inactive meaning that it his internal state
+    /// isActive is changed to false whatever it was before
+    /// </summary>
     public class SetInActiveVirtualObject
     {
         public string messageID;
@@ -82,92 +47,79 @@ namespace TourBackend
         }
     }
 
-    // here we need another variable time, meaning if it would take 
-    // too long to get all the informations from all GameObjectActors
-    // we can then easily define a behavior like throwing an error or sth else
+    /// <summary>
+    /// with this message we want that the controler can request all virtual objects to know which virtualObjects are 
+    /// currently in the isActive == true state
+    /// </summary>
     public class RequestAllVirtualObjects
     {
-        public PID senderPID;
+        // here we need another variable time, meaning if it would take 
+        // too long to get all the informations from all GameObjectActors
+        // we can then easily define a behavior like throwing an error or sth else
         public string messageID;
-        public string targetActor;
-        public TimeSpan time;
+        public TimeSpan timeSpan;
 
-        public RequestAllVirtualObjects(string _messageID, PID _senderPID, TimeSpan _time)
+        public RequestAllVirtualObjects(string _messageID, TimeSpan _time)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-            time = _time;
-        }
-
-        public RequestAllVirtualObjects(string _messageID, PID _senderPID, string _targetActor, TimeSpan _time)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-            time = _time;
+            timeSpan = _time;
         }
     }
+
+    /* the following three message commands are features that are not used for the nano-case ! */
+
+    /// <summary>
+    /// this was intented to start a video on a virtual object
+    /// </summary>
+    public class StartVirtualObject
+    {
+        public string messageID;
+        public string virtualObjectIDToBeStarted;
+
+        public StartVirtualObject(string _messageID, string _virtualObjectIDToBeStarted)
+        {
+            messageID = _messageID;
+            virtualObjectIDToBeStarted = _virtualObjectIDToBeStarted;
+        }
+    }
+
+    /// <summary>
+    /// this was intented to stop a video on a virtual object
+    /// </summary>
+    public class StopVirtualObject
+    {
+        public string messageID;
+        public string virtualObjectIDToBeStopped;
+
+        public StopVirtualObject(string _messageID, string _virtualObjectIDToBeStopped)
+        {
+            messageID = _messageID;
+            virtualObjectIDToBeStopped = _virtualObjectIDToBeStopped;
+        }
+    }
+
+    /// <summary>
+    /// this was intented to be able to kill a specific virtualObject
+    /// </summary>
     public class KillVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string toBeKilledVirtualObjectID;
 
-        public KillVirtualObject(string _messageID, PID _senderPID)
+        public KillVirtualObject(string _messageID, string _toBeKilledVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public KillVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            toBeKilledVirtualObjectID = _toBeKilledVirtualObjectID;
         }
     }
 
-    /* Now we define all the responds to the upper tasks */
+    /* Now we define all the responds to the upper commands */
 
-    
-    public class RespondStartVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public RespondStartVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public RespondStartVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
-    public class RespondStopVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public RespondStopVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public RespondStopVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
+    /// <summary>
+    /// the idea here is that if the virtualObject is set active that the controlActor gets the respond with the 
+    /// command messageID he sent to the recognitionManager AND the respond should also have the ID from the virtualObject
+    /// which is now in the active mode.
+    /// </summary>
     public class RespondSetActiveVirtualObject
     {
         public string messageID;
@@ -179,6 +131,12 @@ namespace TourBackend
             nowActiveVirtualObjectID = _nowActiveVirtualObjectID;
         }
     }
+
+    /// <summary>
+    /// the idea here is that if the virtualObject is set inactive that the controlActor gets the respond with the 
+    /// command messageID he sent to the recognitionManager AND the respond should also have the ID from the virtualObject
+    /// which is now in the inactive mode.
+    /// </summary>
     public class RespondSetInActiveVirtualObject
     {
         public string messageID;
@@ -190,167 +148,131 @@ namespace TourBackend
             nowInActiveVirtualObjectID = _nowInActiveVirtualObjectID;
         }
     }
-    // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
-    // in form of a dictionary with a key CodeObjectID and a value CodeObject itself. BUT a codeObject should
-    // only be in this dictionary if its internal variable isActive == true, otherwise it should not be in the 
-    // dictionary
+
+    /// <summary>
+    /// the idea here is that we answer to the requestAllVirtualObjects with a dictionary with all active virtual objects and 
+    /// their virtualobjectID in it. Furthermore we also send the messageID of the original command, to have the full information
+    /// needed for the controlActor
+    /// </summary>
     public class RespondRequestAllVirtualObjects
     {
         public string messageID;
-        public Dictionary<string, CodeObject> codeObjectIDToCodeObjectPID;
+        // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
+        // in form of a dictionary with a key CodeObjectID and a variable CodeObject itself. BUT a codeObject should
+        // only be in this dictionary if its internal variable isActive == true, otherwise it should not be in the dictionary
+        public Dictionary<string, CodeObject> codeObjectIDToCodeObject;
 
         public RespondRequestAllVirtualObjects(string _messageID, Dictionary<string,CodeObject> _dict)
         {
             messageID = _messageID;
-            codeObjectIDToCodeObjectPID = _dict;
+            codeObjectIDToCodeObject = _dict;
         }
     }
+
+    /* the following three message responds to the commands are features that are not used for the nano-case ! */
+
+    public class RespondStartVirtualObject
+    {
+        public string messageID;
+        public string nowStartedVirtualObjectID;
+
+        public RespondStartVirtualObject(string _messageID, string _nowStartedVirtualObjectID)
+        {
+            messageID = _messageID;
+            nowStartedVirtualObjectID = _nowStartedVirtualObjectID;
+        }
+    }
+
+    public class RespondStopVirtualObject
+    {
+        public string messageID;
+        public string nowStoppedVirtualObjectID;
+
+        public RespondStopVirtualObject(string _messageID, string _nowStoppedVirtualObjectID)
+        {
+            messageID = _messageID;
+            nowStoppedVirtualObjectID = _nowStoppedVirtualObjectID;
+        }
+    }
+
     public class RespondKillVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string nowKilledVirtualObjectID;
 
-        public RespondKillVirtualObject(string _messageID, PID _senderPID)
+        public RespondKillVirtualObject(string _messageID, string _nowKilledVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public RespondKillVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            nowKilledVirtualObjectID = _nowKilledVirtualObjectID;
         }
     }
 
-    /* Now we define all the fails to the upper tasks */
+    /* Now we define all the fails to the upper tasks. The idea here is that we only have to respond with a fail message
+     * Secondly the messageID from the command has also to be sent, cause we want to know which command could not be done. */
 
-    
-    public class FailedToStartVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
+    /* First the failures for the nano case. */
 
-        public FailedToStartVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public FailedToStartVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
-    public class FailedToStopVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public FailedToStopVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public FailedToStopVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
     public class FailedToSetActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
-
-        public FailedToSetActiveVirtualObject(string _messageID, PID _senderPID)
+        public FailedToSetActiveVirtualObject(string _messageID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public FailedToSetActiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
         }
     }
-    public class FailedToSetInactiveVirtualObject
+
+    public class FailedToSetInActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
-
-        public FailedToSetInactiveVirtualObject(string _messageID, PID _senderPID)
+        public FailedToSetInActiveVirtualObject(string _messageID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public FailedToSetInactiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
         }
     }
-    // here we need another variable time, meaning if it would take 
-    // too long to get all the informations from all GameObjectActors
-    // we can then easily define a behavior like throwing an error or sth else
+ 
     public class FailedToRequestAllVirtualObjects
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
-        public TimeSpan time;
-
-        public FailedToRequestAllVirtualObjects(string _messageID, PID _senderPID, TimeSpan _time)
+        public FailedToRequestAllVirtualObjects(string _messageID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-            time = _time;
-        }
-
-        public FailedToRequestAllVirtualObjects(string _messageID, PID _senderPID, string _targetActor, TimeSpan _time)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-            time = _time;
         }
     }
+
+    /* Secondly the failures for the not nano case. */
+
+    public class FailedToStartVirtualObject
+    {
+        public string messageID;
+        public FailedToStartVirtualObject(string _messageID)
+        {
+            messageID = _messageID;
+        }
+    }
+
+    public class FailedToStopVirtualObject
+    {
+        public string messageID;
+        public FailedToStopVirtualObject(string _messageID)
+        {
+            messageID = _messageID;
+        }
+    }
+
     public class FailedToKillVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
-
-        public FailedToKillVirtualObject(string _messageID, PID _senderPID)
+        public FailedToKillVirtualObject(string _messageID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public FailedToKillVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
         }
     }
-    // this message Type here is only for testing... actually in a usecase the controlActor never asks the recognition manager
-    // to create a new object, cause that he does it on his own. if the reco Manager sees a new marker then he immediately
-    // creates a new VirtualObject from his own without calling the ControllActor 
+    
+    /// <summary>
+    /// this message Type here is only for testing... actually in a usecase the controlActor never asks the recognition manager
+    /// to create a new object, cause that he does it on his own. if the reco Manager sees a new marker then he immediately
+    /// creates a new VirtualObject from his own without calling the ControllActor 
+    /// </summary>
     public class CreateNewVirtualObject
     {
         public CodeObject codeObject;
@@ -361,10 +283,13 @@ namespace TourBackend
             codeObjectID = _codeObjectID;
         }
     }
-    // here the sense of this message is that if we got the message NewFrameArrived with a specific messageID,
-    // then we should work with that frame and if the work is succesfully done we should respond with that 
-    // message type and with the same messageID as the request came and then the control Actor knows that
-    // the frame was successfully done
+ 
+    /// <summary>
+    /// here the sense of this message is that if we got the message NewFrameArrived with a specific messageID,
+    /// then we should work with that frame and if the work is succesfully done we should respond with that 
+    /// message type and with the same messageID as the request came and then the control Actor knows that
+    /// the frame was successfully done
+    /// </summary>
     public class RespondNewFrameArrived
     {
         public string messageID;

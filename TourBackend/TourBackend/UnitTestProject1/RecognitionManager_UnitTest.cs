@@ -4,6 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using Proto;
 using System.Threading.Tasks;
+// the next ones are needed for the test with the frames
+using Windows.Graphics.Imaging;
+using System.Reflection;
+using System.IO;
+
+
 
 namespace TourBackend
 {
@@ -60,7 +66,7 @@ namespace TourBackend
             // here we really do now the request from the testControlActor to the recognitionManager and we store
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
             // which contains of a dictionary and a messageID to know to which Request the Respond was
-            var msg4 = new RequestAllVirtualObjects("Request1", _pidTestControlActor, TimeSpan.FromSeconds(1));
+            var msg4 = new RequestAllVirtualObjects("Request1", TimeSpan.FromSeconds(1));
             var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg4, TimeSpan.FromSeconds(1));
             // here we actually test if the Call "RequestAllVirtualObjects" can what we intended
             // first we check if the response have the same messageID as the request had
@@ -70,7 +76,7 @@ namespace TourBackend
             expectedDictionary.Add(_codeObject1.objectid, _codeObject1);
             //here we do not expect the _codeObject2 since his isActive == false
             expectedDictionary.Add(_codeObject3.objectid, _codeObject3);
-            CollectionAssert.AreEqual(response.codeObjectIDToCodeObjectPID, expectedDictionary);
+            CollectionAssert.AreEqual(response.codeObjectIDToCodeObject, expectedDictionary);
         }
         /// <summary>
         /// The idea here is that we send a message to the Recognition Manager to SetActive a specific 
@@ -167,10 +173,23 @@ namespace TourBackend
             // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
             var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
             var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
-            // create a new object of the message type NewFrameArrived
+            // create a new object of the message type NewFrameArrived. for this we need firstly a new messageID
             string _messageID = "NewFrameArrived1";
-
-
+            // and secondly a SoftwareBitmap and to get a testbitmap we need to follow these steps...they are
+            // copied from the CameraFeedActor_UnitTest.cs and where there defined
+            Windows.Graphics.Imaging.SoftwareBitmap _testbitmap;
+            // Creates a testframe with the right Type
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            path = Path.Combine(path, "Resources");
+            path = Path.Combine(path, "TestVideo_000.bmp");
+            Stream testfile = File.OpenRead(path);
+            _testbitmap = await Utils.CreateTestFrame(testfile);
+            // now we are able to create the message
+            var msg = new NewFrameArrived(_messageID, _testbitmap);
+            // now send this message to the recognitionManager and get the answer in the response variable
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondNewFrameArrived>(msg, TimeSpan.FromSeconds(1));
+            // now check if we get the right answer meaning the right message id
+            Assert.AreEqual(response.messageID, _messageID);
         }
     }
 }
