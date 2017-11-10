@@ -34,7 +34,17 @@ namespace TourBackend
             var msg = context.Message;
             switch (msg)
             {
-
+                case UpdateCodeObjectActor u:
+                    mediaid = u.mediaid;
+                    position = u.position;
+                    rotation = u.rotation;
+                    break;
+                case RequestCodeObject r:
+                    var _msg = new RespondCodeObject(r.messageid, new CodeObject(objectid, mediaid, position, rotation, isActive));
+                    context.Sender.Tell(_msg);
+                    break;
+                default:
+                    break;
             }
             return Actor.Done;
         }
