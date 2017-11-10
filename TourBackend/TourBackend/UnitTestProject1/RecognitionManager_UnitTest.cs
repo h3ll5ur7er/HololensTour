@@ -51,7 +51,7 @@ namespace TourBackend
             _pidTestRecognitionManager.Tell(msg1);
             // and here the second. 
             var msg2 = new CreateNewVirtualObject("Create2", _pidTestControlActor, "2");
-            _pidTestRecognitionManager.Tell(msg2);
+             _pidTestRecognitionManager.Tell(msg2);
             // here we really do now the request from the testControlActor to the recognitionManager and we store
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
             // which contains of a dictionary and a messageID to know to which Request the Respond was

@@ -16,8 +16,8 @@ namespace TourBackend
         {
 
             var dict = new Dictionary<string, CodeObject>();
-            var cd1 = new CodeObject("cd1", 1, new[] { 1, 2, 3 }, new[] { 4, 5, 6 });
-            var cd2 = new CodeObject("cd2", 1, new[] { 4, 7, 8 }, new[] { 1, 19, 3 }); // Just build two "random" CodeObjects
+            var cd1 = new CodeObject("cd1", 1, new[] { 1f, 2f, 3f }, new[] { 4f, 5f, 6f });
+            var cd2 = new CodeObject("cd2", 1, new[] { 4f, 7f, 8f }, new[] { 1f, 19f, 3f }); // Just build two "random" CodeObjects
 
             dict.Add("cd1", cd1);
             dict.Add("cd2", cd2);
@@ -313,8 +313,8 @@ namespace TourBackend
             bool _isActive = false;
             string _objectid = "Object1";
             int _mediaid = 27;
-            int[] _position = { 1, 2, 3 };
-            int[] _rotation = { 2, 5, 7 };
+            float[] _position = { 1f, 2f, 3f };
+            float[] _rotation = { 2f, 5f, 7f };
             // create two testobjects with the two different constructors
             CodeObject testCodeObject1 = new CodeObject(_objectid, _mediaid, _position, _rotation);
             CodeObject testCodeObject2 = new CodeObject(_objectid, _mediaid, _position, _rotation,_isActive);

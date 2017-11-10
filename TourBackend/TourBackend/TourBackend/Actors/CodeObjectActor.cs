@@ -15,8 +15,8 @@ namespace TourBackend
 
         public string objectid;
         public int mediaid;
-        public int[] position;
-        public int[] rotation;
+        public float[] position;
+        public float[] rotation;
 
         public CodeObjectActor(string _id, bool _isActive)
         {
