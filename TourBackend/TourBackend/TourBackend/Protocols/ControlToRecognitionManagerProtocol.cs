@@ -70,23 +70,15 @@ namespace TourBackend
             toBeActiveVirtualObjectID = _toBeActiveVirtualObjectID;
         }
     }
-    public class SetInactiveVirtualObject
+    public class SetInActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string toBeInActiveVirtualObjectID;
 
-        public SetInactiveVirtualObject(string _messageID, PID _senderPID)
+        public SetInActiveVirtualObject(string _messageID, string _toBeInActiveVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public SetInactiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            toBeInActiveVirtualObjectID = _toBeInActiveVirtualObjectID;
         }
     }
 
@@ -187,23 +179,15 @@ namespace TourBackend
             nowActiveVirtualObjectID = _nowActiveVirtualObjectID;
         }
     }
-    public class RespondSetInactiveVirtualObject
+    public class RespondSetInActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string nowInActiveVirtualObjectID;
 
-        public RespondSetInactiveVirtualObject(string _messageID, PID _senderPID)
+        public RespondSetInActiveVirtualObject(string _messageID, string _nowInActiveVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public RespondSetInactiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            nowInActiveVirtualObjectID = _nowInActiveVirtualObjectID;
         }
     }
     // here we need another variable time, meaning if it would take 
@@ -214,12 +198,12 @@ namespace TourBackend
     public class RespondRequestAllVirtualObjects
     {
         public string messageID;
-        public Dictionary<string, CodeObject> codeObjectIDToCodeObject;
+        public Dictionary<string, CodeObject> codeObjectIDToCodeObjectPID;
 
         public RespondRequestAllVirtualObjects(string _messageID, Dictionary<string,CodeObject> _dict)
         {
             messageID = _messageID;
-            codeObjectIDToCodeObject = _dict;
+            codeObjectIDToCodeObjectPID = _dict;
         }
     }
     public class RespondKillVirtualObject
@@ -365,5 +349,17 @@ namespace TourBackend
             targetActor = _targetActor;
         }
     }
+    public class CreateNewVirtualObject
+    {
+        public CodeObject codeObject;
+        public string codeObjectID;
+        public CreateNewVirtualObject(string _codeObjectID, CodeObject _codeObject)
+        {
+            codeObject = _codeObject;
+            codeObjectID = _codeObjectID;
+        }
+
+    }
+
 
 }

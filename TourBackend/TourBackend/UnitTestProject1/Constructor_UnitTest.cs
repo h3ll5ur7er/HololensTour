@@ -80,19 +80,13 @@ namespace TourBackend
             Assert.AreEqual(testobject3.toBeActiveVirtualObjectID, _toBeActiveVirtualObjectID);
         }
         [TestMethod]
-        public void SetInactiveVirtualObject_Constructor_must_create_object()
+        public void SetInActiveVirtualObject_Constructor_must_create_object()
         {
-            var _senderPID = new PID();
-            string _targetActor = "_targetActor";
-            var testobject2 = new SetInactiveVirtualObject("_id", _senderPID);
-            var testobject3 = new SetInactiveVirtualObject("_id", _senderPID, _targetActor);
-            // test the constructor with 2 arguments
-            Assert.AreEqual(testobject2.messageID, "_id");
-            Assert.AreEqual(testobject2.senderPID, _senderPID);
-            // test the constructor with 3 arguments
+            string _toBeInActiveVirtualObjectID = "toBeActiveVirtualObjectID";
+            var testobject3 = new SetInActiveVirtualObject("_id", _toBeInActiveVirtualObjectID);
+            // test the constructor
             Assert.AreEqual(testobject3.messageID, "_id");
-            Assert.AreEqual(testobject3.senderPID, _senderPID);
-            Assert.AreEqual(testobject3.targetActor, _targetActor);
+            Assert.AreEqual(testobject3.toBeInActiveVirtualObjectID, _toBeInActiveVirtualObjectID);
         }
         [TestMethod]
         public void RequestAllVirtualObjects_Constructor_must_create_object()
@@ -163,25 +157,18 @@ namespace TourBackend
         {
             string _nowActiveVirtualObjectID = "nowActiveVirtualObjectID";
             var testobject2 = new RespondSetActiveVirtualObject("_id", _nowActiveVirtualObjectID);
-            var testobject3 = new RespondSetActiveVirtualObject("_id", _nowActiveVirtualObjectID);
             // test the constructor
-            Assert.AreEqual(testobject3.messageID, "_id");
-            Assert.AreEqual(testobject3.nowActiveVirtualObjectID, _nowActiveVirtualObjectID);
+            Assert.AreEqual(testobject2.messageID, "_id");
+            Assert.AreEqual(testobject2.nowActiveVirtualObjectID, _nowActiveVirtualObjectID);
         }
         [TestMethod]
         public void RespondSetInactiveVirtualObject_Constructor_must_create_object()
         {
-            var _senderPID = new PID();
-            string _targetActor = "_targetActor";
-            var testobject2 = new RespondSetInactiveVirtualObject("_id", _senderPID);
-            var testobject3 = new RespondSetInactiveVirtualObject("_id", _senderPID, _targetActor);
-            // test the constructor with 2 arguments
+            string _nowInActiveVirtualObjectID = "nowInActiveVirtualObjectID";
+            var testobject2 = new RespondSetInActiveVirtualObject("_id", _nowInActiveVirtualObjectID);
+            // test the constructor
             Assert.AreEqual(testobject2.messageID, "_id");
-            Assert.AreEqual(testobject2.senderPID, _senderPID);
-            // test the constructor with 3 arguments
-            Assert.AreEqual(testobject3.messageID, "_id");
-            Assert.AreEqual(testobject3.senderPID, _senderPID);
-            Assert.AreEqual(testobject3.targetActor, _targetActor);
+            Assert.AreEqual(testobject2.nowInActiveVirtualObjectID, _nowInActiveVirtualObjectID);
         }
         [TestMethod]
         public void RespondRequestAllVirtualObjects_Constructor_must_create_object()
@@ -194,7 +181,7 @@ namespace TourBackend
             // test the constructor with the two arguments
             Assert.AreEqual(testobject.messageID, "_id");
             // with CollectionAssert you can test whole Dictionaries...
-            CollectionAssert.AreEqual(testobject.codeObjectIDToCodeObject, _dict);
+            CollectionAssert.AreEqual(testobject.codeObjectIDToCodeObjectPID, _dict);
         }
         [TestMethod]
         public void RespondKillVirtualObject_Constructor_must_create_object()

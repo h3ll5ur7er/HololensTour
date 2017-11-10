@@ -47,28 +47,27 @@ namespace TourBackend
             float[] rotation3 = { 11, 1, 14 };
             var _codeObject3 = new CodeObject("3", 1, position3, rotation3, true);
             // here we say to the TestRecognitionManager to create first one CodeObject with the codeObjectID = 1
-            var msg1 = new CreateNewVirtualObject("1");
+            // and we give the CodeObject itself also.
+            var msg1 = new CreateNewVirtualObject("1", _codeObject1);
             _pidTestRecognitionManager.Tell(msg1);
             // and here the second. 
-            var msg2 = new CreateNewVirtualObject("Create2", _pidTestControlActor, "2");
+            var msg2 = new CreateNewVirtualObject("2", _codeObject2);
              _pidTestRecognitionManager.Tell(msg2);
+            // and here the third. 
+           var msg3 = new CreateNewVirtualObject("3", _codeObject3);
+            _pidTestRecognitionManager.Tell(msg3);
             // here we really do now the request from the testControlActor to the recognitionManager and we store
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
             // which contains of a dictionary and a messageID to know to which Request the Respond was
-            var msg3 = new RequestAllVirtualObjects("Request1", _pidTestControlActor, TimeSpan.FromSeconds(1));
+            var msg4 = new RequestAllVirtualObjects("Request1", _pidTestControlActor, TimeSpan.FromSeconds(1));
             var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg3, TimeSpan.FromSeconds(1));
             // here we actually test if the Call "RequestAllVirtualObjects" can what we intended
             // first we check if the response have the same messageID as the request had
             Assert.AreEqual(response.messageID, "Request1");
-            // then we check if the dictionary contains the key 1 and 2 since we inserted two CodeObjects of with this ID's
-            Assert.AreEqual(response.codeObjectIDToCodeObject.ContainsKey("1"), true);
-            Assert.AreEqual(response.codeObjectIDToCodeObject.ContainsKey("2"), true);
-            // here we check if the response's dictionary contains exactly what wi inserted before
-            CodeObject value1 = response.codeObjectIDToCodeObject["1"];
-            // with this statement we get the value to the key in the brackets. this is dictionary syntax
-            CodeObject value2 = response.codeObjectIDToCodeObject["2"];
-            Assert.AreEqual(value1, _codeObject1);
-            Assert.AreEqual(value2, _codeObject2);
+            // then we check if the dictionaries are the same. 
+            Dictionary<string, PID> testDictionary = new Dictionary<string, PID>();
+
+            CollectionAssert.AreEqual(response.codeObjectIDToCodeObjectPID, testDictionary);
         }
         /// <summary>
         /// The idea here is that we send a message to the Recognition Manager to SetActive a specific 
