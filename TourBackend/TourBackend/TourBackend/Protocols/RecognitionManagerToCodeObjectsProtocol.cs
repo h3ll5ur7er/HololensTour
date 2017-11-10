@@ -32,9 +32,23 @@ namespace TourBackend
 
     public class RequestCodeObject {
         public string messageid;
+        public PID sender;
 
-        public RequestCodeObject(string _messageid) {
+        public RequestCodeObject(string _messageid, PID _sender) {
             messageid = _messageid;
+            sender = _sender;
+        }
+    }
+
+    public class RespondCodeObject
+    {
+        public string messageid;
+        public CodeObject codeobject;
+
+        public RespondCodeObject(string _messageid, CodeObject _codeobject)
+        {
+            messageid = _messageid;
+            codeobject = _codeobject;
         }
     }
 
