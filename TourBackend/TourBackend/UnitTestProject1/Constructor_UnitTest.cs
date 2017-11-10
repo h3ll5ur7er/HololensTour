@@ -118,7 +118,7 @@ namespace TourBackend
         }
 
         [TestMethod]
-        public void RespondSetInactiveVirtualObject_Constructor_must_create_object()
+        public void RespondSetInActiveVirtualObject_Constructor_must_create_object()
         {
             string _nowInActiveVirtualObjectID = "nowInActiveVirtualObjectID";
             var testobject2 = new RespondSetInActiveVirtualObject("_id", _nowInActiveVirtualObjectID);
@@ -184,7 +184,7 @@ namespace TourBackend
         }
 
         [TestMethod]
-        public void FailedToSetInactiveVirtualObject_Constructor_must_create_object()
+        public void FailedToSetInActiveVirtualObject_Constructor_must_create_object()
         {
             string _messageID = "messageID";
             var testObject = new FailedToSetInActiveVirtualObject(_messageID);
@@ -228,7 +228,7 @@ namespace TourBackend
         /* test the constructor for the codeObjects. */
 
         [TestMethod]
-        public void CodeObject_must_be_constructed_correctly()
+        public void CodeObject_must_creat_object()
         {
             bool _isActive = false;
             string _objectid = "Object1";
