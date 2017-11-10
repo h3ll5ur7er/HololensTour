@@ -59,7 +59,7 @@ namespace TourBackend
             var syncprops = Actor.FromProducer(() => new SyncActor("syncactor", sync));
             this.syncActor = Actor.Spawn(syncprops);
 
-            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager", video));
+            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager"));
             this.recognitionManager = Actor.Spawn(recogprops);
 
             var cameraFeedSyncprops = Actor.FromProducer(() => new CameraFeedActor("camerafeedactor", video, self));
@@ -91,7 +91,7 @@ namespace TourBackend
             var syncprops = Actor.FromProducer(() => new SyncActor("syncactor", sync));
             this.syncActor = Actor.Spawn(syncprops);
 
-            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager", video));
+            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager"));
             this.recognitionManager = Actor.Spawn(recogprops);
 
             switch (debug)
@@ -123,10 +123,10 @@ namespace TourBackend
                     recognitionManager.Tell(n);
                     break;
                 case RespondNewFrameArrived r:
-                    recognitionManager.Tell(new RequestAllVirtualObjects(r.id,self,TimeSpan.FromMilliseconds(25)));
+                    recognitionManager.Request(new RequestAllVirtualObjects(r.messageID,TimeSpan.FromMilliseconds(25)), self);
                 break;
                 case RespondRequestAllVirtualObjects r:
-                    syncActor.Request(new WriteCurrentTourState(r.messageID, r.codeObjectIDToCodeObjectPID), self);
+                    syncActor.Request(new WriteCurrentTourState(r.messageID, r.codeObjectIDToCodeObject), self);
                     break;
             }
             return Actor.Done;
