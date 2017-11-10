@@ -28,28 +28,45 @@ namespace TourBackend
 
             var pid = new PID();
 
-            var request = new RequestCodeObject("message1", pid);
+            var request = new RequestCodeObject("message1");
             Assert.AreEqual(request.messageid, "message1");
-            Assert.AreEqual(request.sender, pid);
         }
 
         [TestMethod]
         public async Task CodeObjectActor_must_respond_to_RequestCodeObject()
         {
-            var msg = new Object();
-
-            var propsTestActor = Actor.FromProducer(() => new TestActor(ref msg));
-            var pidTestActor = Actor.Spawn(propsTestActor);
 
             var propsCOActor = Actor.FromProducer(() => new CodeObjectActor("COActor1"));
             var pidCOActor = Actor.Spawn(propsCOActor);
 
             pidCOActor.Tell(new UpdateCodeObjectActor("q", "CoActor1", 5,new[] {1,23 }, new[] { 4,15}));
-            var reply = await pidCOActor.RequestAsync<RespondCodeObject>(new RequestCodeObject("Hello", pidTestActor), TimeSpan.FromSeconds(1));
+            var reply = await pidCOActor.RequestAsync<RespondCodeObject>(new RequestCodeObject("Hello"), TimeSpan.FromSeconds(1));
 
             Assert.AreEqual(reply.messageid, "Hello");
             Assert.AreEqual(reply.codeobject.isActive, true);
             Assert.AreEqual(reply.codeobject.mediaid, 5);
+        }
+
+        [TestMethod]
+        public async Task CodeObject_must_be_activatable() {
+            var propsCOActor = Actor.FromProducer(() => new CodeObjectActor("COActor1", false));
+            var pidCOActor = Actor.Spawn(propsCOActor);
+
+            var reply0 = await pidCOActor.RequestAsync<RespondCodeObject>(new RequestCodeObject("Hello"), TimeSpan.FromSeconds(1));
+            Assert.AreEqual(reply0.codeobject.isActive, false);
+
+            var reply1 = await pidCOActor.RequestAsync<RespondSetActiveVirtualObject>(new SetActiveVirtualObject("Excelsior!", "CoActor1"), TimeSpan.FromSeconds(1));
+            Assert.AreEqual(reply1.messageID, "Excelsior!");
+            Assert.AreEqual(reply1.nowActiveVirtualObjectID, "CoActor1");
+
+            var reply2 = await pidCOActor.RequestAsync<RespondCodeObject>(new RequestCodeObject("Hello"), TimeSpan.FromSeconds(1));
+            Assert.AreEqual(reply2.codeobject.isActive, true);
+
+        }
+
+        public async Task CodeObject_must_be_deactivatable()
+        {
+
         }
 
     }
