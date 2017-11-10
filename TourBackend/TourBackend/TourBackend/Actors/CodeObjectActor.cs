@@ -10,7 +10,6 @@ namespace TourBackend
     public class CodeObjectActor : IActor
     {
 
-        public string id { get; }
         public bool isActive = true;
 
         public string objectid;
@@ -18,15 +17,15 @@ namespace TourBackend
         public float[] position;
         public float[] rotation;
 
-        public CodeObjectActor(string _id, bool _isActive)
+        public CodeObjectActor(string _objectid, bool _isActive)
         {
-            id = _id;
+            objectid = _objectid;
             isActive = _isActive;
         }
 
-        public CodeObjectActor(string _id)
+        public CodeObjectActor(string _objectid)
         {
-            id = _id;
+            objectid = _objectid;
         }
 
         public Task ReceiveAsync(IContext context)
@@ -35,13 +34,29 @@ namespace TourBackend
             switch (msg)
             {
                 case UpdateCodeObjectActor u:
-                    mediaid = u.mediaid;
-                    position = u.position;
-                    rotation = u.rotation;
+                    if (u.objectid == objectid)
+                    {
+                        mediaid = u.mediaid;
+                        position = u.position;
+                        rotation = u.rotation;
+                    }
                     break;
                 case RequestCodeObject r:
                     var _msg = new RespondCodeObject(r.messageid, new CodeObject(objectid, mediaid, position, rotation, isActive));
                     context.Sender.Tell(_msg);
+                    break;
+                case SetActiveVirtualObject s:
+                    if (s.toBeActiveVirtualObjectID == objectid) {
+                        isActive = true;
+                        context.Sender.Tell(new RespondSetActiveVirtualObject(s.messageID, objectid));
+                    }
+                    break;
+                case SetInActiveVirtualObject s:
+                    if (s.toBeActiveVirtualObjectID == objectid)
+                    {
+                        isActive = false;
+                        context.Sender.Tell(new RespondSetInActiveVirtualObject(s.messageID, objectid));
+                    }
                     break;
                 default:
                     break;

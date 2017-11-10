@@ -8,6 +8,7 @@ using Proto;
 using System.Threading;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace TourBackend
 {
@@ -55,7 +56,15 @@ namespace TourBackend
 
             test.UpdateFrame();
 
-            Thread.Sleep(1000);
+            // See if the output has been updated within 1 second
+            Stopwatch stop = new Stopwatch();
+            stop.Start();
+            while (stop.ElapsedMilliseconds < 1000 && syncobj.dict != dict) {
+                Thread.Sleep(5); // Arbitrary sleep length
+            }
+            stop.Stop();
+
+            // Fail test if syncobj hasn't been updated
             CollectionAssert.AreEqual(syncobj.dict, dict);
         }
     }
