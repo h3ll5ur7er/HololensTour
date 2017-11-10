@@ -74,7 +74,7 @@ namespace TourBackend
 
             var reply1 = await pidCOActor.RequestAsync<RespondSetInActiveVirtualObject>(new SetInActiveVirtualObject("Excelsior!", "CoActor1"), TimeSpan.FromSeconds(1));
             Assert.AreEqual(reply1.messageID, "Excelsior!");
-            Assert.AreEqual(reply1.nowActiveVirtualObjectID, "CoActor1");
+            Assert.AreEqual(reply1.nowInActiveVirtualObjectID, "CoActor1");
 
             var reply2 = await pidCOActor.RequestAsync<RespondCodeObject>(new RequestCodeObject("Hello"), TimeSpan.FromSeconds(1));
             Assert.AreEqual(reply2.codeobject.isActive, false);

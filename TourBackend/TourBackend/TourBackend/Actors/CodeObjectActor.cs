@@ -52,7 +52,7 @@ namespace TourBackend
                     }
                     break;
                 case SetInActiveVirtualObject s:
-                    if (s.toBeActiveVirtualObjectID == objectid)
+                    if (s.toBeInActiveVirtualObjectID == objectid)
                     {
                         isActive = false;
                         context.Sender.Tell(new RespondSetInActiveVirtualObject(s.messageID, objectid));
