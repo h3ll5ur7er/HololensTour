@@ -26,16 +26,10 @@ namespace TourBackend
         public async Task Control_Asks_RecognitionManager_RequestAllVirtualObjects()
         // for the RequestAsync method call we need firstly an async keyword in the declaration of the Task
         {
-            // these objects we need to create the ControlActor and the RecognitionManager and they do not
-            // have any further functionality
-            SyncObject _testSyncObject = new SyncObject("", null);
-            // create a reference for the PID with the help of a empty PID. The idea here is to store the pid
-            // of the created recognition manager in the controlActorconstructor to the _pidTestRecognitionManager
-            // this is implicit done in the debug constructor of the controlActor with the additional argument ref _PIDdebug
-            var _pidTestRecognitionManager = new PID();
-            // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
-            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
-            var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
+            // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
+            // test a protocoll
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
+            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
             // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 
             // the testControlActor. Without these create Statements we could not test this unit properly
