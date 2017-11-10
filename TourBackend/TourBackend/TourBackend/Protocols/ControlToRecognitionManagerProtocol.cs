@@ -79,21 +79,13 @@ namespace TourBackend
     }
     public class SetActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string toBeActiveVirtualObjectID;
 
-        public SetActiveVirtualObject(string _messageID, PID _senderPID)
+        public SetActiveVirtualObject(string _messageID, string _toBeActiveVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public SetActiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            toBeActiveVirtualObjectID = _toBeActiveVirtualObjectID;
         }
     }
     public class SetInactiveVirtualObject
@@ -165,21 +157,16 @@ namespace TourBackend
 
     public class RespondCreateNewVirtualObject
     {
-        public PID senderPID;
+        // this we need to be able to know which message it was that created the new virtualObject
         public string messageID;
-        public string targetActor;
+        // this we need as an identification that we can check if the created object is really the 
+        // object that has to be created
+        public string createdVirtualObjectID;
 
-        public RespondCreateNewVirtualObject(string _messageID, PID _senderPID)
+        public RespondCreateNewVirtualObject(string _messageID, string _createdVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public RespondCreateNewVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            createdVirtualObjectID = _createdVirtualObjectID;
         }
     }
     public class RespondStartVirtualObject
@@ -222,21 +209,13 @@ namespace TourBackend
     }
     public class RespondSetActiveVirtualObject
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
+        public string nowActiveVirtualObjectID;
 
-        public RespondSetActiveVirtualObject(string _messageID, PID _senderPID)
+        public RespondSetActiveVirtualObject(string _messageID, string _nowActiveVirtualObjectID)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
-        }
-
-        public RespondSetActiveVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
+            nowActiveVirtualObjectID = _nowActiveVirtualObjectID;
         }
     }
     public class RespondSetInactiveVirtualObject
@@ -265,24 +244,13 @@ namespace TourBackend
     // in form of a dictionary with a key CodeObjectID and a value CodeObject itself
     public class RespondRequestAllVirtualObjects
     {
-        public PID senderPID;
         public string messageID;
-        public string targetActor;
         public Dictionary<string, CodeObject> codeObjectIDToCodeObject;
 
-        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, Dictionary<string,CodeObject> _dict)
+        public RespondRequestAllVirtualObjects(string _messageID, Dictionary<string,CodeObject> _dict)
         {
-            senderPID = _senderPID;
             messageID = _messageID;
             codeObjectIDToCodeObject = _dict;
-        }
-
-        public RespondRequestAllVirtualObjects(string _messageID, PID _senderPID, Dictionary<string, CodeObject> _dict, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            codeObjectIDToCodeObject = _dict;
-            targetActor = _targetActor;
         }
     }
     public class RespondKillVirtualObject

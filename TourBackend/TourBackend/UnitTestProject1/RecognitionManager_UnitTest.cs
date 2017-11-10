@@ -9,7 +9,7 @@ namespace TourBackend
 {
     [TestClass]
     public class RecognititonManager_UnitTest
-    {
+    {  
         /// <summary>
         /// The idea here is to test that if the conrtrolActor asks the recognitionManager
         /// to get all CodeObjects, that are in the current tourState, the controlActor gets a dictionary
@@ -66,11 +66,70 @@ namespace TourBackend
             Assert.AreEqual(value1, _codeObject1);
             Assert.AreEqual(value2, _codeObject2);
         }
-
+        /// <summary>
+        /// The idea here is that if the controlActor asks the recognitionManager to create a new 
+        /// virtualObject, that a new virtualObject gets created and the regognition manager should
+        /// respond to the ControlActor with the corresponding messageID and the CodeObjectID from the 
+        /// created object...
+        /// </summary>
         [TestMethod]
-        public void ControlAsksRecognitionManagerToCreateVirtualObject()
+        public async Task Control_Asks_RecognitionManager_To_CreateNewVirtualObject()
         {
-            // Do some testing here
+            // these objects we need to create the ControlActor and the RecognitionManager and they do not
+            // have any further functionality
+            SyncObject _testSyncObject = new SyncObject("", null);
+            // here we create the testControlActor
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
+            var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
+            // here we create the TestRecognitionManager
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
+            var pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
+            // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
+            // we need this to be defined to be able to create two new CodeObjects in an easy way
+            // CodeObject 1 we want to create
+            int[] position1 = { 1, 2, 3 };
+            int[] rotation1 = { 2, 2, 4 };
+            var _codeObject1 = new CodeObject("1", 0, position1, rotation1);
+            var msg1 = new CreateNewVirtualObject("Create1", _pidTestControlActor, "1");
+            // to test what comes back we need to store that respond into a variable of the RespondCreateNewCodeObject type
+            var response = await pidTestRecognitionManager.RequestAsync<RespondCreateNewVirtualObject>(msg1, TimeSpan.FromSeconds(1));
+            // now test if the messageId is the same of the respond as from the command
+            Assert.AreEqual(response.messageID, "Create1");
+            // test if the CodeObjectID which we wanted to creat is the same as the one which was actually created
+            Assert.AreEqual(response.createdVirtualObjectID, "1");
+        }
+        /// <summary>
+        /// The idea here is that we send a message to the Recognition Manager to SetActive a specific 
+        /// VirtualObject. The Recognition Manager should response with the messageID of the SetActive Command
+        /// and the VirtualObjectID of the now active VirtualObject
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Control_Asks_RecognitionManager_To_SetActiveVirtualObject()
+        {
+            // these objects we need to create the ControlActor and the RecognitionManager and they do not
+            // have any further functionality
+            SyncObject _testSyncObject = new SyncObject("", null);
+            // here we create the testControlActor
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
+            var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
+            // here we create the TestRecognitionManager
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
+            var pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
+            // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
+            // we need this to be defined in order to be able to say which VirtualObject we want to setActive
+            // CodeObject 1
+            int[] position1 = { 1, 2, 3 };
+            int[] rotation1 = { 2, 2, 4 };
+            // here we use the non default constructor such that the isActive boolean is initialised false
+            var _codeObject1 = new CodeObject("1", 0, position1, rotation1, false);
+            // define the message
+            var msg = new SetActiveVirtualObject("SetActive1", "1");
+            // Now send the message to the RecognitionManager to SetActive the _codeObject 1 and store the response
+            var response = await pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg,TimeSpan.FromSeconds(1));
+            // now test the 
+
+
         }
     }
 }
