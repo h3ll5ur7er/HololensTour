@@ -23,12 +23,13 @@ namespace TourBackend
             // these objects we need to create the ControlActor and the RecognitionManager and they do not
             // have any further functionality
             SyncObject _testSyncObject = new SyncObject("", null);
-            // here we create the testControlActor
-            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
+            // create a reference for the PID with the help of a empty PID. The idea here is to store the pid
+            // of the created recognition manager in the controlActorconstructor to the _pidTestRecognitionManager
+            // this is implicit done in the debug constructor of the controlActor with the additional argument ref _PIDdebug
+            var _pidTestRecognitionManager = new PID();
+            // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
             var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
-            // here we create the TestRecognitionManager
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
-            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
             // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 
             // the testControlActor. Without these create Statements we could not test this unit properly
@@ -60,14 +61,16 @@ namespace TourBackend
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
             // which contains of a dictionary and a messageID to know to which Request the Respond was
             var msg4 = new RequestAllVirtualObjects("Request1", _pidTestControlActor, TimeSpan.FromSeconds(1));
-            var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg3, TimeSpan.FromSeconds(1));
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg4, TimeSpan.FromSeconds(1));
             // here we actually test if the Call "RequestAllVirtualObjects" can what we intended
             // first we check if the response have the same messageID as the request had
             Assert.AreEqual(response.messageID, "Request1");
-            // then we check if the dictionaries are the same. 
-            Dictionary<string, PID> testDictionary = new Dictionary<string, PID>();
-
-            CollectionAssert.AreEqual(response.codeObjectIDToCodeObjectPID, testDictionary);
+            // then we check if the dictionaries are the same. First define the expected Dictionary
+            Dictionary<string, CodeObject> expectedDictionary = new Dictionary<string, CodeObject>();
+            expectedDictionary.Add(_codeObject1.objectid, _codeObject1);
+            //here we do not expect the _codeObject2 since his isActive == false
+            expectedDictionary.Add(_codeObject3.objectid, _codeObject3);
+            CollectionAssert.AreEqual(response.codeObjectIDToCodeObjectPID, expectedDictionary);
         }
         /// <summary>
         /// The idea here is that we send a message to the Recognition Manager to SetActive a specific 
@@ -81,12 +84,13 @@ namespace TourBackend
             // these objects we need to create the ControlActor and the RecognitionManager and they do not
             // have any further functionality
             SyncObject _testSyncObject = new SyncObject("", null);
-            // here we create the testControlActor
-            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
+            // create a reference for the PID with the help of a empty PID. The idea here is to store the pid
+            // of the created recognition manager in the controlActorconstructor to the _pidTestRecognitionManager
+            // this is implicit done in the debug constructor of the controlActor with the additional argument ref _PIDdebug
+            var _pidTestRecognitionManager = new PID();
+            // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
             var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
-            // here we create the TestRecognitionManager
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
-            var pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
             // we need this to be defined in order to be able to say which VirtualObject we want to setActive
             // CodeObject 1
@@ -97,7 +101,7 @@ namespace TourBackend
             // define the message
             var msg = new SetActiveVirtualObject("SetActive1", "1");
             // Now send the message to the RecognitionManager to SetActive the _codeObject 1 and store the response
-            var response = await pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg,TimeSpan.FromSeconds(1));
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg,TimeSpan.FromSeconds(1));
             // now test if the response does contain the information that we want...
             Assert.AreEqual(response.messageID, "SetActive1");
             Assert.AreEqual(response.nowActiveVirtualObjectID, "1");
@@ -117,12 +121,13 @@ namespace TourBackend
             // these objects we need to create the ControlActor and the RecognitionManager and they do not
             // have any further functionality
             SyncObject _testSyncObject = new SyncObject("", null);
-            // here we create the testControlActor
-            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null));
+            // create a reference for the PID with the help of a empty PID. The idea here is to store the pid
+            // of the created recognition manager in the controlActorconstructor to the _pidTestRecognitionManager
+            // this is implicit done in the debug constructor of the controlActor with the additional argument ref _PIDdebug
+            var _pidTestRecognitionManager = new PID();
+            // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
             var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
-            // here we create the TestRecognitionManager
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", null));
-            var pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
             // we need this to be defined in order to be able to say which VirtualObject we want to setInActive
             // CodeObject 1
@@ -134,12 +139,38 @@ namespace TourBackend
             // define the message
             var msg = new SetActiveVirtualObject("SetInActive1", "1");
             // Now send the message to the RecognitionManager to SetInActive the _codeObject 1 and store the response
-            var response = await pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg, TimeSpan.FromSeconds(1));
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg, TimeSpan.FromSeconds(1));
             // now test if the response does contain the information that we want...
             Assert.AreEqual(response.messageID, "SetInActive1");
             Assert.AreEqual(response.nowActiveVirtualObjectID, "1");
             // and test that the CodeObject changed his internal state isActive to false
             Assert.AreEqual(_codeObject1, false);
+        }
+        /// <summary>
+        /// here the idea is that if the controlActor gets a message from the cameraFeedActor that a new 
+        /// frame arrived, he should forward this message to the recognitionManager. The communication between
+        /// the controlActor and the recognitionManager is here ONLY tested and not the whole flow from the camerafeedActor.
+        /// Therefore if the message NewFrameArrived comes to the Recognition Manager than he should start to work
+        /// with this Frame and if he is finished he should return the message that the 
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Control_forwards_message_NewFrameArrived_to_the_recognitionManager()
+        {
+            // these objects we need to create the ControlActor and the RecognitionManager and they do not
+            // have any further functionality
+            SyncObject _testSyncObject = new SyncObject("", null);
+            // create a reference for the PID with the help of a empty PID. The idea here is to store the pid
+            // of the created recognition manager in the controlActorconstructor to the _pidTestRecognitionManager
+            // this is implicit done in the debug constructor of the controlActor with the additional argument ref _PIDdebug
+            var _pidTestRecognitionManager = new PID();
+            // here we create the testControlActor, the 1 is that the ref _PIDdebug is the RecognitionManager
+            var _propsTestControlActor = Actor.FromProducer(() => new ControlActor("ControlActor", _testSyncObject, null, ref _pidTestRecognitionManager, 1));
+            var _pidTestControlActor = Actor.Spawn(_propsTestControlActor);
+            // create a new object of the message type NewFrameArrived
+            string _messageID = "NewFrameArrived1";
+
+
         }
     }
 }

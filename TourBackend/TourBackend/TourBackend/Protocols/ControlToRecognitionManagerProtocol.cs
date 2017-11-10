@@ -190,11 +190,10 @@ namespace TourBackend
             nowInActiveVirtualObjectID = _nowInActiveVirtualObjectID;
         }
     }
-    // here we need another variable time, meaning if it would take 
-    // too long to get all the informations from all GameObjectActors
-    // we can then easily define a behavior like throwing an error or sth else
     // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
-    // in form of a dictionary with a key CodeObjectID and a value CodeObject itself
+    // in form of a dictionary with a key CodeObjectID and a value CodeObject itself. BUT a codeObject should
+    // only be in this dictionary if its internal variable isActive == true, otherwise it should not be in the 
+    // dictionary
     public class RespondRequestAllVirtualObjects
     {
         public string messageID;
@@ -349,6 +348,9 @@ namespace TourBackend
             targetActor = _targetActor;
         }
     }
+    // this message Type here is only for testing... actually in a usecase the controlActor never asks the recognition manager
+    // to create a new object, cause that he does it on his own. if the reco Manager sees a new marker then he immediately
+    // creates a new VirtualObject from his own without calling the ControllActor 
     public class CreateNewVirtualObject
     {
         public CodeObject codeObject;
@@ -358,8 +360,17 @@ namespace TourBackend
             codeObject = _codeObject;
             codeObjectID = _codeObjectID;
         }
-
     }
-
-
+    // here the sense of this message is that if we got the message NewFrameArrived with a specific messageID,
+    // then we should work with that frame and if the work is succesfully done we should respond with that 
+    // message type and with the same messageID as the request came and then the control Actor knows that
+    // the frame was successfully done
+    public class RespondNewFrameArrived
+    {
+        public string messageID;
+        public RespondNewFrameArrived(string _messageID)
+        {
+            messageID = _messageID;
+        }
+    }
 }
