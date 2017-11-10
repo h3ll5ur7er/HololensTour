@@ -12,7 +12,12 @@ namespace TourBackend
 
         public string id { get; }
         public bool isActive = true;
-    
+
+        public string objectid;
+        public int mediaid;
+        public int[] position;
+        public int[] rotation;
+
         public CodeObjectActor(string _id, bool _isActive)
         {
             id = _id;
