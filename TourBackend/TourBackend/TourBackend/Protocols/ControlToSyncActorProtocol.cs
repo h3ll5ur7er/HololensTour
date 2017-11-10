@@ -36,12 +36,22 @@ namespace TourBackend
 
     public class CodeObject {
 
+        public bool isActive = true;
         public string objectid;
         public int mediaid;
         public int[] position;
         public int[] rotation;
 
-        public CodeObject(string _objectid, int _mediaid, int[] _position, int[] _rotation) {
+        public CodeObject(string _objectid, int _mediaid, int[] _position, int[] _rotation, bool _isActive) {
+            objectid = _objectid;
+            mediaid = _mediaid;
+            position = _position;
+            rotation = _rotation;
+            isActive = _isActive;
+        }
+
+        public CodeObject(string _objectid, int _mediaid, int[] _position, int[] _rotation)
+        {
             objectid = _objectid;
             mediaid = _mediaid;
             position = _position;

@@ -10,11 +10,18 @@ namespace TourBackend
     public class CodeObjectActor : IActor
     {
 
-        protected string Id { get; }
-
-        public CodeObjectActor(string id)
+        public string id { get; }
+        public bool isActive = true;
+    
+        public CodeObjectActor(string _id, bool _isActive)
         {
-            Id = id;
+            id = _id;
+            isActive = _isActive;
+        }
+
+        public CodeObjectActor(string _id)
+        {
+            id = _id;
         }
 
         public Task ReceiveAsync(IContext context)

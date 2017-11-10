@@ -57,12 +57,12 @@ namespace TourBackend
             // first we check if the response have the same messageID as the request had
             Assert.AreEqual(response.messageID, "Request1");
             // then we check if the dictionary contains the key 1 and 2 since we inserted two CodeObjects of with this ID's
-            Assert.AreEqual(response.CodeObjectIDToCodeObject.ContainsKey("1"), true);
-            Assert.AreEqual(response.CodeObjectIDToCodeObject.ContainsKey("2"), true);
+            Assert.AreEqual(response.codeObjectIDToCodeObject.ContainsKey("1"), true);
+            Assert.AreEqual(response.codeObjectIDToCodeObject.ContainsKey("2"), true);
             // here we check if the response's dictionary contains exactly what wi inserted before
-            CodeObject value1 = response.CodeObjectIDToCodeObject["1"];
+            CodeObject value1 = response.codeObjectIDToCodeObject["1"];
             // with this statement we get the value to the key in the brackets. this is dictionary syntax
-            CodeObject value2 = response.CodeObjectIDToCodeObject["2"];
+            CodeObject value2 = response.codeObjectIDToCodeObject["2"];
             Assert.AreEqual(value1, _codeObject1);
             Assert.AreEqual(value2, _codeObject2);
         }
