@@ -20,25 +20,7 @@ namespace TourBackend
 
     /* Now we first define all the tasks */
 
-    public class CreateNewVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public CreateNewVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public CreateNewVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
+    
     public class StartVirtualObject
     {
         public PID senderPID;
@@ -155,20 +137,7 @@ namespace TourBackend
 
     /* Now we define all the responds to the upper tasks */
 
-    public class RespondCreateNewVirtualObject
-    {
-        // this we need to be able to know which message it was that created the new virtualObject
-        public string messageID;
-        // this we need as an identification that we can check if the created object is really the 
-        // object that has to be created
-        public string createdVirtualObjectID;
-
-        public RespondCreateNewVirtualObject(string _messageID, string _createdVirtualObjectID)
-        {
-            messageID = _messageID;
-            createdVirtualObjectID = _createdVirtualObjectID;
-        }
-    }
+    
     public class RespondStartVirtualObject
     {
         public PID senderPID;
@@ -275,25 +244,7 @@ namespace TourBackend
 
     /* Now we define all the fails to the upper tasks */
 
-    public class FailedToCreateNewVirtualObject
-    {
-        public PID senderPID;
-        public string messageID;
-        public string targetActor;
-
-        public FailedToCreateNewVirtualObject(string _messageID, PID _senderPID)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-        }
-
-        public FailedToCreateNewVirtualObject(string _messageID, PID _senderPID, string _targetActor)
-        {
-            senderPID = _senderPID;
-            messageID = _messageID;
-            targetActor = _targetActor;
-        }
-    }
+    
     public class FailedToStartVirtualObject
     {
         public PID senderPID;

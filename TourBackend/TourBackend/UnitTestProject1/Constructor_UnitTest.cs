@@ -41,21 +41,6 @@ namespace TourBackend
     public class ControlToRecognitionManagerProtocol
     {
         [TestMethod]
-        public void CreateNewVirtualObject_Constructor_must_create_object()
-        {
-            var _senderPID = new PID();
-            string _targetActor = "_targetActor";
-            var testobject2 = new CreateNewVirtualObject("_id", _senderPID);
-            var testobject3 = new CreateNewVirtualObject("_id", _senderPID, _targetActor);
-            // test the constructor with 2 arguments
-            Assert.AreEqual(testobject2.messageID, "_id");
-            Assert.AreEqual(testobject2.senderPID, _senderPID);
-            // test the constructor with 3 arguments
-            Assert.AreEqual(testobject3.messageID, "_id");
-            Assert.AreEqual(testobject3.senderPID, _senderPID);
-            Assert.AreEqual(testobject3.targetActor, _targetActor);
-        }
-        [TestMethod]
         public void StartVirtualObject_Constructor_must_create_object()
         {
             var _senderPID = new PID();
@@ -143,15 +128,6 @@ namespace TourBackend
             Assert.AreEqual(testobject3.senderPID, _senderPID);
             Assert.AreEqual(testobject3.targetActor, _targetActor);
         }
-
-        [TestMethod]
-        public void RespondCreateNewVirtualObject_Constructor_must_create_object()
-        {
-            var testobject = new RespondCreateNewVirtualObject("_id", "createdVirtualObjectID");
-            // test the constructor with 2 arguments
-            Assert.AreEqual(testobject.messageID, "_id");
-            Assert.AreEqual(testobject.createdVirtualObjectID, "createdVirtualObjectID");
-        }
         [TestMethod]
         public void RespondStartVirtualObject_Constructor_must_create_object()
         {
@@ -236,21 +212,6 @@ namespace TourBackend
             Assert.AreEqual(testobject3.targetActor, _targetActor);
         }
 
-        [TestMethod]
-        public void FailedToCreateNewVirtualObject_Constructor_must_create_object()
-        {
-            var _senderPID = new PID();
-            string _targetActor = "_targetActor";
-            var testobject2 = new FailedToCreateNewVirtualObject("_id", _senderPID);
-            var testobject3 = new FailedToCreateNewVirtualObject("_id", _senderPID, _targetActor);
-            // test the constructor with 2 arguments
-            Assert.AreEqual(testobject2.messageID, "_id");
-            Assert.AreEqual(testobject2.senderPID, _senderPID);
-            // test the constructor with 3 arguments
-            Assert.AreEqual(testobject3.messageID, "_id");
-            Assert.AreEqual(testobject3.senderPID, _senderPID);
-            Assert.AreEqual(testobject3.targetActor, _targetActor);
-        }
         [TestMethod]
         public void FailedToStartVirtualObject_Constructor_must_create_object()
         {
@@ -347,7 +308,7 @@ namespace TourBackend
         }
         // test the constructor for the codeObjects
         [TestMethod]
-        public void CodeObject_Constructor_has_to_be_right()
+        public void CodeObject_must_be_constructed_correctly()
         {
             bool _isActive = false;
             string _objectid = "Object1";
@@ -364,11 +325,11 @@ namespace TourBackend
             Assert.AreEqual(testCodeObject1.rotation, _rotation);
             Assert.AreEqual(testCodeObject1.isActive, true);
             // test the constructor with 5 arguments
-            Assert.AreEqual(testCodeObject1.objectid, _objectid);
-            Assert.AreEqual(testCodeObject1.mediaid, _mediaid);
-            Assert.AreEqual(testCodeObject1.position, _position);
-            Assert.AreEqual(testCodeObject1.rotation, _rotation);
-            Assert.AreEqual(testCodeObject1.isActive, _isActive);
+            Assert.AreEqual(testCodeObject2.objectid, _objectid);
+            Assert.AreEqual(testCodeObject2.mediaid, _mediaid);
+            Assert.AreEqual(testCodeObject2.position, _position);
+            Assert.AreEqual(testCodeObject2.rotation, _rotation);
+            Assert.AreEqual(testCodeObject2.isActive, _isActive);
 
         }
     }
