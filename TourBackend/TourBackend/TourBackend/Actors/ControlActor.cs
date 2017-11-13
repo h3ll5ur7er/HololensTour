@@ -70,6 +70,10 @@ namespace TourBackend
             pidctrl.RequestAsync<RespondStartFramework>(new StartFramework(pidctrl), TimeSpan.FromSeconds(1));
         }
 
+        public PID GetPID() {
+            return this.pidctrl;
+        }
+
     }
 
     public class StartFramework {

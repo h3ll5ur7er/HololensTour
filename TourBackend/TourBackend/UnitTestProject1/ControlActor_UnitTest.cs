@@ -66,6 +66,7 @@ namespace TourBackend
             var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
             var camobj = new CameraFeedSyncObject("test");
             var debugPID = new PID();
+
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
             // Key:

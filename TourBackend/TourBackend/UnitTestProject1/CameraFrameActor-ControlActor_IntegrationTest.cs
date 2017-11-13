@@ -84,7 +84,7 @@ namespace TourBackend
                 // Creates a testframe from local bitmaps
                 var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 path = Path.Combine(path, "Resources");
-                path = Path.Combine(path, "TestVideo_000.bmp");
+                path = Path.Combine(path, "TestVideo_00"+i+".bmp");
                 Stream testfile = File.OpenRead(path);
                 testframe = await Utils.CreateTestFrame(testfile);
 
@@ -96,8 +96,6 @@ namespace TourBackend
                 // The timestamp is also the message id
 
                 camerafeedsyncobject.UpdateFrame();
-
-
 
                 // See if the output has been updated within 1 second
                 Stopwatch stop = new Stopwatch();

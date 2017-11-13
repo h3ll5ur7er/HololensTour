@@ -10,6 +10,7 @@ namespace TourBackend
 {
     public class CameraFeedActor : IActor
     {
+
         public string id { get; }
         public CameraFeedSyncObject sync;
         public PID ctrlActor;
