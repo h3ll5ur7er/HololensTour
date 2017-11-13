@@ -12,25 +12,43 @@ using Windows.Media.Capture.Frames;
 using Windows.Graphics.Imaging;
 
 using System.Threading.Tasks;
+
 #endif
 
+/*
+ * Usage:
+ * 1. Call Initialize with the CameraFeedSyncObject as argument
+ 
+     */
 
-//#if !UNITY_EDITOR && UNITY_METRO
-public class VideoController {
 
-    public CameraFeedSyncObject sync;
+#if !UNITY_EDITOR && UNITY_METRO
+public class VideoController : MonoBehaviour
+{
 
-    public VideoController(CameraFeedSyncObject _sync) {
+    private MediaCapture mediaCapture = null;
+    public TourBackend.CameraFeedSyncObject sync;
+    private MediaFrameReader frameReader = null;
+    private string TAG = "debug...";
+    public System.Diagnostics.Stopwatch stopwatch = null;
+
+    public async Task Initialize(TourBackend.CameraFeedSyncObject _sync)
+    {
         sync = _sync;
+        await InitializeMediaCaptureAsyncTask();
+        await StartFrameReaderAsyncTask();
+    }
+
+    public void Start() {
+    }
+    public void Update() {
     }
 
     public async Task<bool> InitializeMediaCaptureAsyncTask()
     {
-        if (controller.status != ARUWP.ARUWP_STATUS_CLEAN)
-        {
-            Debug.Log(TAG + ": InitializeMediaCaptureAsyncTask() unsupported status");
-            return false;
-        }
+
+        stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
 
         if (mediaCapture != null)
         {
@@ -75,9 +93,12 @@ public class VideoController {
             Debug.Log(TAG + ": minResFormat.Subtype is " + minResFormat.Subtype);
             frameReader = await mediaCapture.CreateFrameReaderAsync(mediaFrameSourceVideoPreview, minResFormat.Subtype);
             frameReader.FrameArrived += OnFrameArrived;
+            // TODO: framewidth
+            /*
             controller.frameWidth = Convert.ToInt32(minResFormat.VideoFormat.Width);
             controller.frameHeight = Convert.ToInt32(minResFormat.VideoFormat.Height);
             videoBufferSize = controller.frameWidth * controller.frameHeight * 4;
+            */
             Debug.Log(TAG + ": FrameReader is successfully initialized");
         }
         catch (Exception e)
@@ -108,13 +129,7 @@ public class VideoController {
 
     public async Task<bool> StopFrameReaderAsyncTask()
     {
-        if (controller.status != ARUWP.ARUWP_STATUS_RUNNING)
-        {
-            Debug.Log(TAG + ": StopFrameReaderAsyncTask() fails because of incorrect status");
-            return false;
-        }
         await frameReader.StopAsync();
-        controller.status = ARUWP.ARUWP_STATUS_CTRL_INITIALIZED;
         Debug.Log(TAG + ": StopFrameReaderAsyncTask() is successful");
         return true;
     }
@@ -127,18 +142,19 @@ public class VideoController {
             if (frame != null)
             {
                 var softwareBitmap = SoftwareBitmap.Convert(frame.VideoMediaFrame.SoftwareBitmap, BitmapPixelFormat.Rgba8, BitmapAlphaMode.Ignore);
-                if (videoPreview)
-                {
-                    Interlocked.Exchange(ref _bitmap, softwareBitmap);
-                    // TODO
-                }
-                else
-                {
-                    controller.ProcessFrameAsync(softwareBitmap);
-                }
-                signalTrackingUpdated = true;
+                UpdateCameraSync(softwareBitmap);
             }
         }
+    }
+
+    private void UpdateCameraSync(SoftwareBitmap _softwarebitmap)
+    {
+        lock (sync.thisLock)
+        {
+            sync.bitmap = _softwarebitmap;
+            sync.timestamp = stopwatch.ElapsedMilliseconds;
+        }
+        sync.UpdateFrame();
     }
 
 }
