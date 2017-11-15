@@ -36,36 +36,57 @@ namespace TourBackend
 
     public class CodeObject {
 
+        public enum MarkerType
+        {
+            single,
+            single_barcode,
+            single_buffer,
+            multi
+        }
+        public MarkerType type;
+        public string singleFileName = "hiro.patt";
+        private byte[] singleBufferBuffer = null;
+        public float singleWidth = 80.0f;
+        public bool oUseContPoseEst = true;
+        public float oConfCutOff = 0.5f;
+
+        public bool applyRotation = true;
+        public bool applyTranslation = true;
+        public int id = -1;
+
         public bool isActive = true;
-        public string objectid;
-        public int mediaid;
         public float[] position;
         public float[] rotation;
+        public float[] scaling;
 
         public CodeObject(CodeObject codeobj) {
 
             position = new float[3];
             rotation = new float[9];
+            scaling = new float[3];
 
-            objectid = codeobj.objectid;
-            mediaid = codeobj.mediaid;
+            id = codeobj.id;
             codeobj.position.CopyTo(position,0);
             codeobj.rotation.CopyTo(rotation, 0);
+            codeobj.scaling.CopyTo(scaling, 0);
             isActive = codeobj.isActive;
+            singleFileName = String.Copy(codeobj.singleFileName);
         }
 
-        public CodeObject(string _objectid, int _mediaid, float[] _position, float[] _rotation, bool _isActive) {
-            objectid = _objectid;
-            mediaid = _mediaid;
+        public CodeObject()
+        {
+        }
+
+        public CodeObject(int _objectid, float[] _position, float[] _rotation, bool _isActive) {
+            id = _objectid;
             position = _position;
             rotation = _rotation;
             isActive = _isActive;
         }
 
-        public CodeObject(string _objectid, int _mediaid, float[] _position, float[] _rotation)
+        public CodeObject(int _objectid, float[] _position, float[] _rotation)
         {
-            objectid = _objectid;
-            mediaid = _mediaid;
+            id = _objectid;;
             position = _position;
             rotation = _rotation;
         }

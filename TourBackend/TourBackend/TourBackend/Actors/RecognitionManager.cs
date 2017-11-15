@@ -11,10 +11,11 @@ namespace TourBackend
     {
 
         protected string Id { get; }
-        public Dictionary<string,CodeObject> CodeObjectIDToCodeObject = new Dictionary<string, CodeObject>();
-        public RecognitionManager(string id)
+        public Dictionary<int,CodeObject> CodeObjectIDToCodeObject = new Dictionary<int, CodeObject>();
+        public RecognitionManager(string id, Dictionary<int, CodeObject> _dict)
         {
             Id = id;
+            CodeObjectIDToCodeObject = _dict;
         }
 
         public Task ReceiveAsync(IContext context)
