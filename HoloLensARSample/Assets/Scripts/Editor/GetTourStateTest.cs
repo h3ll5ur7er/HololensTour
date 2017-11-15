@@ -221,6 +221,27 @@ namespace TourBackend
         }
 
 
+        [Test]
+
+        public void GetTourState_initialize_CameraFeedSyncObject_correctly()
+        {
+            //Start GetTourState
+            getTourState.Start();
+
+            //Compare if CameraFeedSyncObject is created
+            Assert.AreEqual("cfsyncid",getTourState.cfSyncObject.id);
+            
+        }
+        //Todo: reference of CameraFeedSyncObject
+        [Test]
+        public void GetTourState_addComponent_ARUWPVideo()
+        {
+            getTourState.Start();
+
+            //Check if Component is attached
+            Assert.AreNotEqual(null,getTourState.GetComponent<ARUWPVideo>());
+        }
+
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]

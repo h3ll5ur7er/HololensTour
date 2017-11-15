@@ -8,8 +8,11 @@ namespace TourBackend
     public class GetTourState : MonoBehaviour
     {
         public SyncObject syncObject;
+        public CameraFeedSyncObject cfSyncObject;
         public Dictionary<string, CodeObject> CopyOfDict;// = new Dictionary<string, CodeObject>();
         public System.Int64 lasttimestamp;
+
+
         // Use this for initialization
         public void Start()
         {
@@ -18,6 +21,13 @@ namespace TourBackend
             syncObject = new SyncObject("syncid", new Dictionary<string, CodeObject>());
             syncObject.SetTimeStamp(lasttimestamp);
             CopyOfDict = new Dictionary<string, CodeObject>();
+            //Initialisation of CameraFeedSyncObject
+            cfSyncObject = new CameraFeedSyncObject("cfsyncid");
+
+            //Todo:
+            //Initialize ARVideo and give reference of CameraFeedSyncObject
+            ARUWPVideo aruwpVideo = this.gameObject.AddComponent<ARUWPVideo>();
+            //Initialize Framework and give refences of SyncObject and CameraFeedSyncObject 
 
         }
 
