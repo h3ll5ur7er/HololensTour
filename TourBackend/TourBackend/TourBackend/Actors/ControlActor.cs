@@ -20,10 +20,52 @@ namespace TourBackend
             video = _video;
         }
 
+        public bool InitializeDLL() {
+            ARUWP.aruwpRegisterLogCallbackWrapper(ARUWP.Log);
+            ARUWP.aruwpSetLogLevel((int)(AR_LOG_LEVEL.AR_LOG_LEVEL_INFO));
+            var ret = ARUWP.aruwpInitialiseAR(frameWidth, frameHeight, ARUWP.AR_PIXEL_FORMAT_RGBA);
+            foreach (var m in unaddedMarkers)
+            {
+                m.AddMarker();
+                m.LogMarkerInformation();
+            }
+            if (useCameraParamFile)
+            {
+                ret = ARUWP.aruwpStartRunning("Data/StreamingAssets/" + cameraParam);
+            }
+            else
+            {
+                if (cameraParamBuffer != null)
+                {
+                    ret = ARUWP.aruwpStartRunningBuffer(cameraParamBuffer, cameraParamBuffer.Length);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (!ret)
+            {
+                return false;
+            }
+
+            // Set default tracking options
+            SetVideoThreshold(threshold);
+            SetVideoThresholdMode(thresholdMode);
+            SetLabelingMode(labelingMode);
+            SetPatternDetectionMode(patternDetectionMode);
+            SetBorderSize(borderSize);
+            SetMatrixCodeType(matrixCodeType);
+            SetImageProcMode(imageProcMode);
+
+        }
+
         public void Initialize()
         {
             var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, video));
             pidctrl = Actor.Spawn(propsctrl);
+
+
 
             pidctrl.RequestAsync<RespondStartFramework>(new StartFramework(pidctrl), TimeSpan.FromSeconds(1));
         }

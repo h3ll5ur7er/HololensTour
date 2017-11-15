@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6117F13A-3545-4024-98CF-83A05080F0E0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>TourBackend</RootNamespace>
     <AssemblyName>TourBackend</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -66,6 +66,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
@@ -109,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\UwpDesktop.10.0.14393.3\analyzers\dotnet\UwpDesktopAnalyzer.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\UwpDesktop.10.0.14393.3\build\portable-net45+uap\UwpDesktop.targets" Condition="Exists('..\packages\UwpDesktop.10.0.14393.3\build\portable-net45+uap\UwpDesktop.targets')" />
