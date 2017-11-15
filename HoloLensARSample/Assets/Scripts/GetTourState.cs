@@ -29,6 +29,10 @@ namespace TourBackend
             ARUWPVideo aruwpVideo = this.gameObject.AddComponent<ARUWPVideo>();
             //Initialize Framework and give refences of SyncObject and CameraFeedSyncObject 
 
+
+            //Test
+           // VideoController videoController = this.gameObject.AddComponent<VideoController>();
+           // videoController.Start(cfSyncObject);
         }
 
         // Update is called once per frame
@@ -42,7 +46,12 @@ namespace TourBackend
             if (syncObject.timestamp != lasttimestamp)
             {
                 lasttimestamp = syncObject.timestamp;
-                CopyOfDict = syncObject.dict;
+                //only reference 
+                //CopyOfDict = syncObject.dict;
+
+                //Deep copy of dict
+                CopyOfDict = CopySyncDict.Copy(syncObject.dict);
+                
                 //ReadDictionaryData
                 foreach (string objectid in CopyOfDict.Keys)
                 {

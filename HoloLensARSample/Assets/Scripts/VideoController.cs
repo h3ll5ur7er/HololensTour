@@ -20,8 +20,7 @@ using System.Threading.Tasks;
  * 1. Call Initialize with the CameraFeedSyncObject as argument
  
      */
-
-
+  
 #if !UNITY_EDITOR && UNITY_METRO
 public class VideoController : MonoBehaviour
 {
@@ -39,9 +38,18 @@ public class VideoController : MonoBehaviour
         await StartFrameReaderAsyncTask();
     }
 
-    public void Start() {
+    public void Start(TourBackend.CameraFeedSyncObject _sync) {
+
+        TaskStarter(_sync);
     }
     public void Update() {
+    }
+
+    public void TaskStarter(TourBackend.CameraFeedSyncObject _sync)
+    {
+        Task task = Initialize(_sync);
+        task.Start();
+        
     }
 
     public async Task<bool> InitializeMediaCaptureAsyncTask()
