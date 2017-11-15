@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TourBackend.Utils
+namespace TourBackend
 {
     public static class CopySyncDict
     {

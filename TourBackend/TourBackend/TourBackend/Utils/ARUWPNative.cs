@@ -26,7 +26,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Text;
 using System;
@@ -98,7 +97,6 @@ namespace TourBackend
             // If there is a logCallback then use that to handle the log message. Otherwise simply
             // print out on the debug console.
             if (logCallbackAct != null) logCallbackAct(msg);
-            else Debug.Log(msg);
         }
         #endregion
 

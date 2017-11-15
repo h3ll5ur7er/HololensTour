@@ -12,18 +12,17 @@ namespace TourBackend
 
         public bool isActive = true;
 
-        public string objectid;
-        public int mediaid;
+        public int objectid;
         public float[] position;
         public float[] rotation;
 
-        public CodeObjectActor(string _objectid, bool _isActive)
+        public CodeObjectActor(int _objectid, bool _isActive)
         {
             objectid = _objectid;
             isActive = _isActive;
         }
 
-        public CodeObjectActor(string _objectid)
+        public CodeObjectActor(int _objectid)
         {
             objectid = _objectid;
         }
@@ -36,13 +35,12 @@ namespace TourBackend
                 case UpdateCodeObjectActor u:
                     if (u.objectid == objectid)
                     {
-                        mediaid = u.mediaid;
                         position = u.position;
                         rotation = u.rotation;
                     }
                     break;
                 case RequestCodeObject r:
-                    var _msg = new RespondCodeObject(r.messageid, new CodeObject(objectid, mediaid, position, rotation, isActive));
+                    var _msg = new RespondCodeObject(r.messageid, new CodeObject(objectid, position, rotation, isActive));
                     context.Sender.Tell(_msg);
                     break;
                 case SetActiveVirtualObject s:

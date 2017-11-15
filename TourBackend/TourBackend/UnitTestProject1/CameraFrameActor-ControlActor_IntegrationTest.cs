@@ -20,17 +20,20 @@ namespace TourBackend
         {
             SoftwareBitmap testframe;
             CameraFeedSyncObject camerafeedsyncobject = new CameraFeedSyncObject("new");
-            SyncObject syncobject = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            SyncObject syncobject = new SyncObject("sync1", new Dictionary<int, CodeObject>());
 
             //This dict will have to be updated to be true to the frame
-            var dict = new Dictionary<string, CodeObject>();
-            var cd1 = new CodeObject("cd1", 1, new[] { 1f, 2f, 3f }, new[] { 4f, 5f, 6f });
-            var cd2 = new CodeObject("cd2", 1, new[] { 4f, 7f, 8f }, new[] { 1f, 19f, 3f }); // Just build two "random" CodeObjects
+            var dict = new Dictionary<int, CodeObject>();
+            var cd1 = new CodeObject();
+            var cd2 = new CodeObject(); // Just build two "random" CodeObjects
+            CodeObject[] codeobjs = new CodeObject[2];
+            codeobjs.SetValue(cd1,0);
+            codeobjs.SetValue(cd2, 1);
 
-            dict.Add("cd1", cd1);
-            dict.Add("cd2", cd2);
+            dict.Add(1, cd1);
+            dict.Add(2, cd2);
 
-            FrameWork fw = new FrameWork(syncobject, camerafeedsyncobject);
+            FrameWork fw = new FrameWork(syncobject, camerafeedsyncobject, codeobjs);
             fw.Initialize();
 
             // Creates a testframe from local bitmaps
@@ -66,17 +69,20 @@ namespace TourBackend
         {
             SoftwareBitmap testframe;
             CameraFeedSyncObject camerafeedsyncobject = new CameraFeedSyncObject("new");
-            SyncObject syncobject = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            SyncObject syncobject = new SyncObject("sync1", new Dictionary<int, CodeObject>());
 
             //This dict will have to be updated to be true to the frame
-            var dict = new Dictionary<string, CodeObject>();
-            var cd1 = new CodeObject("cd1", 1, new[] { 1f, 2f, 3f }, new[] { 4f, 5f, 6f });
-            var cd2 = new CodeObject("cd2", 1, new[] { 4f, 7f, 8f }, new[] { 1f, 19f, 3f }); // Just build two "random" CodeObjects
+            var dict = new Dictionary<int, CodeObject>();
+            var cd1 = new CodeObject();
+            var cd2 = new CodeObject(); // Just build two "random" CodeObjects
+            CodeObject[] codeobjs = new CodeObject[2];
+            codeobjs.SetValue(cd1, 0);
+            codeobjs.SetValue(cd2, 1);
 
-            dict.Add("cd1", cd1);
-            dict.Add("cd2", cd2);
+            dict.Add(1, cd1);
+            dict.Add(2, cd2);
 
-            FrameWork fw = new FrameWork(syncobject, camerafeedsyncobject);
+            FrameWork fw = new FrameWork(syncobject, camerafeedsyncobject, codeobjs);
             fw.Initialize();
 
             for (int i=0;i<5;i++) {

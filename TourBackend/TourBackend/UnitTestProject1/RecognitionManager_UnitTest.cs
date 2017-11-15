@@ -28,7 +28,9 @@ namespace TourBackend
         {
             // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
             // test a protocoll
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
+            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
+
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
             // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 
@@ -38,24 +40,24 @@ namespace TourBackend
             // CodeObject 1 is Active
             float[] position1 = { 1, 2, 3 };
             float[] rotation1 = { 2, 2, 4 };
-            var _codeObject1 = new CodeObject("1", 0, position1, rotation1, true);
+            var _codeObject1 = new CodeObject(1, position1, rotation1, true);
             // CodeObject 2 is inActive
             float[] position2 = { 0, 2, 4 };
             float[] rotation2 = { 2, 3, 5 };
-            var _codeObject2 = new CodeObject("2", 1, position2, rotation2, false);
+            var _codeObject2 = new CodeObject(21, position2, rotation2, false);
             // CodeObject 3 is inActive
             float[] position3 = { 2, 5, 10 };
             float[] rotation3 = { 11, 1, 14 };
-            var _codeObject3 = new CodeObject("3", 1, position3, rotation3, true);
+            var _codeObject3 = new CodeObject(17, position3, rotation3, true);
             // here we say to the TestRecognitionManager to create first one CodeObject with the codeObjectID = 1
             // and we give the CodeObject itself also.
-            var msg1 = new CreateNewVirtualObject("1", _codeObject1);
+            var msg1 = new CreateNewVirtualObject(1, _codeObject1);
             _pidTestRecognitionManager.Tell(msg1);
             // and here the second. 
-            var msg2 = new CreateNewVirtualObject("2", _codeObject2);
+            var msg2 = new CreateNewVirtualObject(21, _codeObject2);
              _pidTestRecognitionManager.Tell(msg2);
             // and here the third. 
-           var msg3 = new CreateNewVirtualObject("3", _codeObject3);
+           var msg3 = new CreateNewVirtualObject(17, _codeObject3);
             _pidTestRecognitionManager.Tell(msg3);
             // here we really do now the request from the testControlActor to the recognitionManager and we store
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
@@ -66,10 +68,10 @@ namespace TourBackend
             // first we check if the response have the same messageID as the request had
             Assert.AreEqual(response.messageID, "Request1");
             // then we check if the dictionaries are the same. First define the expected Dictionary
-            Dictionary<string, CodeObject> expectedDictionary = new Dictionary<string, CodeObject>();
-            expectedDictionary.Add(_codeObject1.objectid, _codeObject1);
+            Dictionary<int, CodeObject> expectedDictionary = new Dictionary<int, CodeObject>();
+            expectedDictionary.Add(_codeObject1.id, _codeObject1);
             //here we do not expect the _codeObject2 since his isActive == false
-            expectedDictionary.Add(_codeObject3.objectid, _codeObject3);
+            expectedDictionary.Add(_codeObject3.id, _codeObject3);
             CollectionAssert.AreEqual(response.codeObjectIDToCodeObject, expectedDictionary);
         }
         /// <summary>
@@ -83,7 +85,9 @@ namespace TourBackend
         {
             // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
             // test a protocoll
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
+            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
+
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
             // we need this to be defined in order to be able to say which VirtualObject we want to setActive
@@ -91,14 +95,14 @@ namespace TourBackend
             float[] position1 = { 1, 2, 3 };
             float[] rotation1 = { 2, 2, 4 };
             // here we use the non default constructor such that the isActive boolean is initialised false
-            var _codeObject1 = new CodeObject("1", 0, position1, rotation1, false);
+            var _codeObject1 = new CodeObject(17, position1, rotation1, false);
             // define the message
-            var msg = new SetActiveVirtualObject("SetActive1", "1");
+            var msg = new SetActiveVirtualObject("SetActive1", 17);
             // Now send the message to the RecognitionManager to SetActive the _codeObject 1 and store the response
             var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg,TimeSpan.FromSeconds(1));
             // now test if the response does contain the information that we want...
             Assert.AreEqual(response.messageID, "SetActive1");
-            Assert.AreEqual(response.nowActiveVirtualObjectID, "1");
+            Assert.AreEqual(response.nowActiveVirtualObjectID, 17);
             // and test that the CodeObject changed his internal state from isActive = false to true
             Assert.AreEqual(_codeObject1, true);
         }
@@ -114,7 +118,9 @@ namespace TourBackend
         {
             // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
             // test a protocoll
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
+            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
+
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
             // we need this to be defined in order to be able to say which VirtualObject we want to setInActive
@@ -123,14 +129,14 @@ namespace TourBackend
             float[] rotation1 = { 2, 2, 4 };
             // here we use the non default constructor such that the isActive boolean is initialised true
             // we could also use the other constructor but here we see it explicitely
-            var _codeObject1 = new CodeObject("1", 0, position1, rotation1, true);
+            var _codeObject1 = new CodeObject(41, position1, rotation1, true);
             // define the message
-            var msg = new SetActiveVirtualObject("SetInActive1", "1");
+            var msg = new SetActiveVirtualObject("SetInActive1", 41);
             // Now send the message to the RecognitionManager to SetInActive the _codeObject 1 and store the response
             var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg, TimeSpan.FromSeconds(1));
             // now test if the response does contain the information that we want...
             Assert.AreEqual(response.messageID, "SetInActive1");
-            Assert.AreEqual(response.nowActiveVirtualObjectID, "1");
+            Assert.AreEqual(response.nowActiveVirtualObjectID, 41);
             // and test that the CodeObject changed his internal state isActive to false
             Assert.AreEqual(_codeObject1, false);
         }
@@ -147,7 +153,9 @@ namespace TourBackend
         {
             // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
             // test a protocoll
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager"));
+            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
+
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // create a new object of the message type NewFrameArrived. for this we need firstly a new messageID
             string _messageID = "NewFrameArrived1";

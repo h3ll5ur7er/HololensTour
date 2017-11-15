@@ -16,14 +16,12 @@ namespace TourBackend
 
     public class UpdateCodeObjectActor {
         public string messageid;
-        public string objectid;
-        public int mediaid;
+        public int objectid;
         public float[] position;
         public float[] rotation;
 
-        public UpdateCodeObjectActor(string _messageid, string _objectid, int _mediaid, float[] _position, float[] _rotation) {
+        public UpdateCodeObjectActor(string _messageid, int _objectid, float[] _position, float[] _rotation) {
             messageid = _messageid;
-            mediaid = _mediaid;
             position = _position;
             rotation = _rotation;
             objectid = _objectid;

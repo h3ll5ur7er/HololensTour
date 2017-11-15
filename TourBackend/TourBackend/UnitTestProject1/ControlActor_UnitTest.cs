@@ -13,7 +13,7 @@ namespace TourBackend
         [TestMethod]
         public void ControlActor_must_correctly_initialize_SyncActor()
         {
-            var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            var syncobj = new SyncObject("sync1", new Dictionary<int, CodeObject>());
             var debugPID = new PID();
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
@@ -37,7 +37,7 @@ namespace TourBackend
         [TestMethod]
         public void ControlActor_must_correctly_initialize_RecognitionManager()
         {
-            var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            var syncobj = new SyncObject("sync1", new Dictionary<int, CodeObject>());
             var debugPID = new PID();
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
@@ -63,9 +63,11 @@ namespace TourBackend
         [TestMethod]
         public void ControlActor_must_be_able_to_get_initialized()
         {
-            var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            var syncobj = new SyncObject("sync1", new Dictionary<int, CodeObject>());
             var camobj = new CameraFeedSyncObject("test");
             var debugPID = new PID();
+
+            CodeObject[] codeobjs = new CodeObject[5];
 
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
@@ -73,7 +75,7 @@ namespace TourBackend
             // 1: RecognitionManager
             // 2: SyncActor
 
-            FrameWork fw = new FrameWork(syncobj, camobj);
+            FrameWork fw = new FrameWork(syncobj, camobj, codeobjs);
             fw.Initialize();
         }
 

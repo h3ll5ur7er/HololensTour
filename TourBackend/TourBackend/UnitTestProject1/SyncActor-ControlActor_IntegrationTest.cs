@@ -14,7 +14,7 @@ namespace TourBackend
         [TestMethod]
         public async Task ControlActor_must_correctly_initialize_SyncActor_which_works()
         {
-            var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            var syncobj = new SyncObject("sync1", new Dictionary<int, CodeObject>());
             var debugPID = new PID();
             // There is a constructor for debugging which allows to view the PID of the chosen Actor
             // the int argument of the constructor is interpreted as the actor which is to be linked to debugPID
@@ -25,17 +25,17 @@ namespace TourBackend
             var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, null, ref debugPID, 2));
             var pidctrl = Actor.Spawn(propsctrl);
 
-            var dict = new Dictionary<string, CodeObject>();
-            var cd1 = new CodeObject("cd1", 1, new[] { 1f, 2f, 3f }, new[] { 4f, 5f, 6f });
-            var cd2 = new CodeObject("cd2", 1, new[] { 4f, 7f, 8f }, new[] { 1f, 19f, 3f }); // Just build two "random" CodeObjects
+            var dict = new Dictionary<int, CodeObject>();
+            var cd1 = new CodeObject(7, new[] { 1f, 2f, 3f }, new[] { 4f, 5f, 6f });
+            var cd2 = new CodeObject(9, new[] { 4f, 7f, 8f }, new[] { 1f, 19f, 3f }); // Just build two "random" CodeObjects
 
-            dict.Add("cd1", cd1);
-            dict.Add("cd2", cd2);
+            dict.Add(7, cd1);
+            dict.Add(9, cd2);
 
-            Assert.AreEqual(dict["cd1"], cd1); // Check that the dict contains the right CodeObjects
-            Assert.AreEqual(dict["cd2"], cd2);
+            Assert.AreEqual(dict[7], cd1); // Check that the dict contains the right CodeObjects
+            Assert.AreEqual(dict[9], cd2);
 
-            var reply = await debugPID.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("dab", dict), TimeSpan.FromSeconds(1));
+            var reply = await debugPID.RequestAsync<RespondWriteCurrentTourState>(new WriteCurrentTourState("Hello", dict), TimeSpan.FromSeconds(1));
             // Note: in any context it does not matter for the behaviour
             // of the actor which receives a message where said message was sent from.
             // The sender only determines where the response is sent to.

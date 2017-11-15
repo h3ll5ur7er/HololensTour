@@ -16,10 +16,10 @@ namespace TourBackend
         public object thisLock = new Object();
 
         public string objectid;
-        public Dictionary<string, CodeObject> dict;
+        public Dictionary<int, CodeObject> dict;
 
         //Basic Konstruktor 
-        public SyncObject(string _objectid, Dictionary<string, CodeObject> _dict)
+        public SyncObject(string _objectid, Dictionary<int, CodeObject> _dict)
         {
             objectid = _objectid;
             dict = _dict;
@@ -98,9 +98,9 @@ namespace TourBackend
     {
 
         public string id;
-        public Dictionary<string, CodeObject> dict;
+        public Dictionary<int, CodeObject> dict;
 
-        public WriteCurrentTourState(string _id, Dictionary<string, CodeObject> _dict)
+        public WriteCurrentTourState(string _id, Dictionary<int, CodeObject> _dict)
         {
             id = _id;
             dict = _dict;

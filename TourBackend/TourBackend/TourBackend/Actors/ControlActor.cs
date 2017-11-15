@@ -312,7 +312,7 @@ namespace TourBackend
             var syncprops = Actor.FromProducer(() => new SyncActor("syncactor", sync));
             this.syncActor = Actor.Spawn(syncprops);
 
-            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager", idToCodeObject));
+            var recogprops = Actor.FromProducer(() => new RecognitionManager("recognitionmanager", dict));
             this.recognitionManager = Actor.Spawn(recogprops);
 
             var cameraFeedSyncprops = Actor.FromProducer(() => new CameraFeedActor("camerafeedactor", video, self));

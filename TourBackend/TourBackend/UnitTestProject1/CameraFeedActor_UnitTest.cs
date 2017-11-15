@@ -91,10 +91,10 @@ namespace TourBackend
             var propstest = Actor.FromProducer(() => new TestActor(ref msg));
             var pidtest = Actor.Spawn(propstest);
 
-            var syncobj = new SyncObject("sync1", new Dictionary<string, CodeObject>());
+            var syncobj = new SyncObject("sync1", new Dictionary<int, CodeObject>());
             var syncobj2 = new CameraFeedSyncObject("sync2");
 
-            var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, null));
+            var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, null, new Dictionary<int, CodeObject>()));
             var pidctrl = Actor.Spawn(propsctrl);
 
             // Statt der PID des ControlActor wird die des TestActors gegeben um die gesendete Nachricht abzufangen

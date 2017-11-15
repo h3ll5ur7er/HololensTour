@@ -22,9 +22,9 @@ namespace TourBackend
     public class SetActiveVirtualObject
     {
         public string messageID;
-        public string toBeActiveVirtualObjectID;
+        public int toBeActiveVirtualObjectID;
 
-        public SetActiveVirtualObject(string _messageID, string _toBeActiveVirtualObjectID)
+        public SetActiveVirtualObject(string _messageID, int _toBeActiveVirtualObjectID)
         {
             messageID = _messageID;
             toBeActiveVirtualObjectID = _toBeActiveVirtualObjectID;
@@ -38,9 +38,9 @@ namespace TourBackend
     public class SetInActiveVirtualObject
     {
         public string messageID;
-        public string toBeInActiveVirtualObjectID;
+        public int toBeInActiveVirtualObjectID;
 
-        public SetInActiveVirtualObject(string _messageID, string _toBeInActiveVirtualObjectID)
+        public SetInActiveVirtualObject(string _messageID, int _toBeInActiveVirtualObjectID)
         {
             messageID = _messageID;
             toBeInActiveVirtualObjectID = _toBeInActiveVirtualObjectID;
@@ -74,9 +74,9 @@ namespace TourBackend
     public class StartVirtualObject
     {
         public string messageID;
-        public string virtualObjectIDToBeStarted;
+        public int virtualObjectIDToBeStarted;
 
-        public StartVirtualObject(string _messageID, string _virtualObjectIDToBeStarted)
+        public StartVirtualObject(string _messageID, int _virtualObjectIDToBeStarted)
         {
             messageID = _messageID;
             virtualObjectIDToBeStarted = _virtualObjectIDToBeStarted;
@@ -89,9 +89,9 @@ namespace TourBackend
     public class StopVirtualObject
     {
         public string messageID;
-        public string virtualObjectIDToBeStopped;
+        public int virtualObjectIDToBeStopped;
 
-        public StopVirtualObject(string _messageID, string _virtualObjectIDToBeStopped)
+        public StopVirtualObject(string _messageID, int _virtualObjectIDToBeStopped)
         {
             messageID = _messageID;
             virtualObjectIDToBeStopped = _virtualObjectIDToBeStopped;
@@ -104,9 +104,9 @@ namespace TourBackend
     public class KillVirtualObject
     {
         public string messageID;
-        public string toBeKilledVirtualObjectID;
+        public int toBeKilledVirtualObjectID;
 
-        public KillVirtualObject(string _messageID, string _toBeKilledVirtualObjectID)
+        public KillVirtualObject(string _messageID, int _toBeKilledVirtualObjectID)
         {
             messageID = _messageID;
             toBeKilledVirtualObjectID = _toBeKilledVirtualObjectID;
@@ -123,9 +123,9 @@ namespace TourBackend
     public class RespondSetActiveVirtualObject
     {
         public string messageID;
-        public string nowActiveVirtualObjectID;
+        public int nowActiveVirtualObjectID;
 
-        public RespondSetActiveVirtualObject(string _messageID, string _nowActiveVirtualObjectID)
+        public RespondSetActiveVirtualObject(string _messageID, int _nowActiveVirtualObjectID)
         {
             messageID = _messageID;
             nowActiveVirtualObjectID = _nowActiveVirtualObjectID;
@@ -140,9 +140,9 @@ namespace TourBackend
     public class RespondSetInActiveVirtualObject
     {
         public string messageID;
-        public string nowInActiveVirtualObjectID;
+        public int nowInActiveVirtualObjectID;
 
-        public RespondSetInActiveVirtualObject(string _messageID, string _nowInActiveVirtualObjectID)
+        public RespondSetInActiveVirtualObject(string _messageID, int _nowInActiveVirtualObjectID)
         {
             messageID = _messageID;
             nowInActiveVirtualObjectID = _nowInActiveVirtualObjectID;
@@ -160,9 +160,9 @@ namespace TourBackend
         // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
         // in form of a dictionary with a key CodeObjectID and a variable CodeObject itself. BUT a codeObject should
         // only be in this dictionary if its internal variable isActive == true, otherwise it should not be in the dictionary
-        public Dictionary<string, CodeObject> codeObjectIDToCodeObject;
+        public Dictionary<int, CodeObject> codeObjectIDToCodeObject;
 
-        public RespondRequestAllVirtualObjects(string _messageID, Dictionary<string,CodeObject> _dict)
+        public RespondRequestAllVirtualObjects(string _messageID, Dictionary<int,CodeObject> _dict)
         {
             messageID = _messageID;
             codeObjectIDToCodeObject = _dict;
@@ -174,9 +174,9 @@ namespace TourBackend
     public class RespondStartVirtualObject
     {
         public string messageID;
-        public string nowStartedVirtualObjectID;
+        public int nowStartedVirtualObjectID;
 
-        public RespondStartVirtualObject(string _messageID, string _nowStartedVirtualObjectID)
+        public RespondStartVirtualObject(string _messageID, int _nowStartedVirtualObjectID)
         {
             messageID = _messageID;
             nowStartedVirtualObjectID = _nowStartedVirtualObjectID;
@@ -186,9 +186,9 @@ namespace TourBackend
     public class RespondStopVirtualObject
     {
         public string messageID;
-        public string nowStoppedVirtualObjectID;
+        public int nowStoppedVirtualObjectID;
 
-        public RespondStopVirtualObject(string _messageID, string _nowStoppedVirtualObjectID)
+        public RespondStopVirtualObject(string _messageID, int _nowStoppedVirtualObjectID)
         {
             messageID = _messageID;
             nowStoppedVirtualObjectID = _nowStoppedVirtualObjectID;
@@ -198,9 +198,9 @@ namespace TourBackend
     public class RespondKillVirtualObject
     {
         public string messageID;
-        public string nowKilledVirtualObjectID;
+        public int nowKilledVirtualObjectID;
 
-        public RespondKillVirtualObject(string _messageID, string _nowKilledVirtualObjectID)
+        public RespondKillVirtualObject(string _messageID, int _nowKilledVirtualObjectID)
         {
             messageID = _messageID;
             nowKilledVirtualObjectID = _nowKilledVirtualObjectID;
@@ -276,8 +276,8 @@ namespace TourBackend
     public class CreateNewVirtualObject
     {
         public CodeObject codeObject;
-        public string codeObjectID;
-        public CreateNewVirtualObject(string _codeObjectID, CodeObject _codeObject)
+        public int codeObjectID;
+        public CreateNewVirtualObject(int _codeObjectID, CodeObject _codeObject)
         {
             codeObject = _codeObject;
             codeObjectID = _codeObjectID;
