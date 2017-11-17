@@ -110,9 +110,9 @@ namespace TourBackend
         [TestMethod]
         public void RespondSetActiveVirtualObject_Constructor_must_create_object()
         {
+            // test the constructor
             int _nowActiveVirtualObjectID = 183749;
             var testobject2 = new RespondSetActiveVirtualObject("_id", _nowActiveVirtualObjectID);
-            // test the constructor
             Assert.AreEqual(testobject2.messageID, "_id");
             Assert.AreEqual(testobject2.nowActiveVirtualObjectID, _nowActiveVirtualObjectID);
         }
@@ -138,7 +138,7 @@ namespace TourBackend
             // test the constructor with the two arguments
             Assert.AreEqual(testobject.messageID, "_id");
             // with CollectionAssert you can test whole Dictionaries...
-            CollectionAssert.AreEqual(testobject.codeObjectIDToCodeObject, _dict);
+            CollectionAssert.AreEqual(testobject.newCodeObjectIDToCodeObject, _dict);
         }
 
         /* Test all constructors of the responds to the commands. Second the ones for the not nano-case. */
@@ -249,5 +249,34 @@ namespace TourBackend
             Assert.AreEqual(testCodeObject2.rotation, _rotation);
             Assert.AreEqual(testCodeObject2.isActive, _isActive);
         }
+
+        /* test the constructor for the createNewVirtualObject. */
+
+        [TestMethod]
+        public void CreateNewVirtualObject_Constructor_must_create_object()
+        {
+            string _messageID = "Create1";
+            int _codeObjectID = 1;
+            float[] _position = { 1f, 2f, 4f };
+            float[] _rotation = { 1f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive = false;
+            CodeObject _codeObject = new CodeObject(_codeObjectID, _position, _rotation, _isActive);
+            var msg = new CreateNewVirtualObject(_messageID, _codeObjectID, _codeObject);
+            Assert.AreEqual(msg.messageID, _messageID);
+            Assert.AreEqual(msg.codeObjectID, _codeObjectID);
+            Assert.AreEqual(msg.codeObject, _codeObject);
+            Assert.AreEqual(msg.codeObject.id, _codeObjectID);
+        }
+
+        /* test the constructor for the Respond to createNewVirtualObject. */
+
+        [TestMethod]
+        public void RespondCreateNewVirtualObject_Constructor_must_create_object()
+        {
+            string _messageID = "Create1";
+            var msg = new RespondCreateNewVirtualObject(_messageID);
+            Assert.AreEqual(msg.messageID, _messageID);
+        }
+
     }
 }

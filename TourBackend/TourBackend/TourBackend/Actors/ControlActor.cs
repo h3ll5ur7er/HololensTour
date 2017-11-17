@@ -380,7 +380,7 @@ namespace TourBackend
                     recognitionManager.Request(new RequestAllVirtualObjects(r.messageID,TimeSpan.FromMilliseconds(25)), self);
                 break;
                 case RespondRequestAllVirtualObjects r:
-                    syncActor.Request(new WriteCurrentTourState(r.messageID, r.codeObjectIDToCodeObject), self);
+                    syncActor.Request(new WriteCurrentTourState(r.messageID, r.newCodeObjectIDToCodeObject), self);
                     break;
             }
             return Actor.Done;

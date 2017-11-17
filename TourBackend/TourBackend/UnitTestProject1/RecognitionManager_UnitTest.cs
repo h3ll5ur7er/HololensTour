@@ -15,64 +15,61 @@ namespace TourBackend
 {
     [TestClass]
     public class RecognititonManager_UnitTest
-    {  
+    {
         /// <summary>
         /// The idea here is to test that if the conrtrolActor asks the recognitionManager
-        /// to get all CodeObjects, that are in the current tourState, the controlActor gets a dictionary
-        /// back. The dictionary consists of an CodeObjectID as a key and the CodeObject itself as a value.
+        /// to get all CodeObjects, that are in the current tourState (meaning the setActive bool is true,
+        /// the controlActor gets a dictionary back. The dictionary consists of an CodeObjectID as a key and 
+        /// the CodeObject itself as a value.
         /// </summary>
         /// <returns></returns>
-       [TestMethod]
+        [TestMethod]
         public async Task Control_Asks_RecognitionManager_RequestAllVirtualObjects()
         // for the RequestAsync method call we need firstly an async keyword in the declaration of the Task
         {
-            // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
-            // test a protocoll
-            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
-
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
+            // first create some objects which should be in the dictionary of the recognition Manager in the 
+            // initialize step => all codeObjects should have the isActive false
+            // CodeObject 1
+            int _codeObjectID1 = 1;
+            float[] _position1 = { 1f, 2f, 4f };
+            float[] _rotation1 = { 1f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive1 = true;
+            CodeObject _codeObject1 = new CodeObject(_codeObjectID1, _position1, _rotation1, _isActive1);
+            // CodeObject 2
+            int _codeObjectID2 = 2;
+            float[] _position2 = { 2f, 2f, 4f };
+            float[] _rotation2 = { 2f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive2 = false;
+            CodeObject _codeObject2 = new CodeObject(_codeObjectID2, _position2, _rotation2, _isActive2);
+            // CodeObject 3, this time we want to have the codeObject to be initialised with the default value
+            // true for the isActive 
+            int _codeObjectID3 = 3;
+            float[] _position3 = { 3f, 2f, 4f };
+            float[] _rotation3 = { 3f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            CodeObject _codeObject3 = new CodeObject(_codeObjectID3, _position3, _rotation3);
+            // then create the dictionary for initialisation of the recognition manager
+            Dictionary<int, CodeObject> _initialDict = new Dictionary<int, CodeObject>();
+            _initialDict.Add(_codeObjectID1, _codeObject1);
+            _initialDict.Add(_codeObjectID2, _codeObject2);
+            _initialDict.Add(_codeObjectID3, _codeObject3);
+            // then create the testrecognition manager and the dictionary with all the initialized markers in it. 
+            // But all have isActive = false...
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _initialDict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
-            // here we specify the attributes of the CodeObjects => look at the constructor of the codeObjects
-            // we need them defined to be able to create two new CodeObjects. We need to create them in order to be able to return a non-empty dictionary to 
-            // the testControlActor. Without these create Statements we could not test this unit properly
-            // cause we need to be sure that the objects which have been created are the ones in the dictionary
-            // and not something else or more or less..
-            // CodeObject 1 is Active
-            float[] position1 = { 1, 2, 3 };
-            float[] rotation1 = { 2, 2, 4 };
-            var _codeObject1 = new CodeObject(1, position1, rotation1, true);
-            // CodeObject 2 is inActive
-            float[] position2 = { 0, 2, 4 };
-            float[] rotation2 = { 2, 3, 5 };
-            var _codeObject2 = new CodeObject(21, position2, rotation2, false);
-            // CodeObject 3 is inActive
-            float[] position3 = { 2, 5, 10 };
-            float[] rotation3 = { 11, 1, 14 };
-            var _codeObject3 = new CodeObject(17, position3, rotation3, true);
-            // here we say to the TestRecognitionManager to create first one CodeObject with the codeObjectID = 1
-            // and we give the CodeObject itself also.
-            var msg1 = new CreateNewVirtualObject(1, _codeObject1);
-            _pidTestRecognitionManager.Tell(msg1);
-            // and here the second. 
-            var msg2 = new CreateNewVirtualObject(21, _codeObject2);
-             _pidTestRecognitionManager.Tell(msg2);
-            // and here the third. 
-           var msg3 = new CreateNewVirtualObject(17, _codeObject3);
-            _pidTestRecognitionManager.Tell(msg3);
             // here we really do now the request from the testControlActor to the recognitionManager and we store
             // the respond to the request in response where this must be a object of the class RespondRequestAllVirtualObjects
             // which contains of a dictionary and a messageID to know to which Request the Respond was
-            var msg4 = new RequestAllVirtualObjects("Request1", TimeSpan.FromSeconds(1));
-            var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(msg4, TimeSpan.FromSeconds(1));
+            var _msgRequestAll = new RequestAllVirtualObjects("RequestAll1", TimeSpan.FromSeconds(1));
+            var response = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(_msgRequestAll, TimeSpan.FromSeconds(1));
             // here we actually test if the Call "RequestAllVirtualObjects" can what we intended
             // first we check if the response have the same messageID as the request had
-            Assert.AreEqual(response.messageID, "Request1");
+            Assert.AreEqual(response.messageID, "RequestAll1");
             // then we check if the dictionaries are the same. First define the expected Dictionary
             Dictionary<int, CodeObject> expectedDictionary = new Dictionary<int, CodeObject>();
-            expectedDictionary.Add(_codeObject1.id, _codeObject1);
-            //here we do not expect the _codeObject2 since his isActive == false
-            expectedDictionary.Add(_codeObject3.id, _codeObject3);
-            CollectionAssert.AreEqual(response.codeObjectIDToCodeObject, expectedDictionary);
+            expectedDictionary.Add(_codeObject1.id, _codeObject1); // since his boolean isActive is true
+            expectedDictionary.Add(_codeObject3.id, _codeObject3); // since his boolean isActive is true
+            // _codeObject2 is not expected since his isActive is false
+            CollectionAssert.AreEqual(response.newCodeObjectIDToCodeObject, expectedDictionary);
         }
         /// <summary>
         /// The idea here is that we send a message to the Recognition Manager to SetActive a specific 
@@ -83,28 +80,53 @@ namespace TourBackend
         [TestMethod]
         public async Task Control_Asks_RecognitionManager_To_SetActiveVirtualObject()
         {
-            // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
-            // test a protocoll
-            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
-
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
-            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
-            // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
-            // we need this to be defined in order to be able to say which VirtualObject we want to setActive
+            // first create some objects which should be in the dictionary of the recognition Manager in the 
+            // initialize step => all codeObjects should have the isActive false
             // CodeObject 1
-            float[] position1 = { 1, 2, 3 };
-            float[] rotation1 = { 2, 2, 4 };
-            // here we use the non default constructor such that the isActive boolean is initialised false
-            var _codeObject1 = new CodeObject(17, position1, rotation1, false);
-            // define the message
-            var msg = new SetActiveVirtualObject("SetActive1", 17);
-            // Now send the message to the RecognitionManager to SetActive the _codeObject 1 and store the response
-            var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg,TimeSpan.FromSeconds(1));
-            // now test if the response does contain the information that we want...
-            Assert.AreEqual(response.messageID, "SetActive1");
-            Assert.AreEqual(response.nowActiveVirtualObjectID, 17);
-            // and test that the CodeObject changed his internal state from isActive = false to true
-            Assert.AreEqual(_codeObject1, true);
+            int _codeObjectID1 = 1;
+            float[] _position1 = { 1f, 2f, 4f };
+            float[] _rotation1 = { 1f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive1 = false;
+            CodeObject _codeObject1 = new CodeObject(_codeObjectID1, _position1, _rotation1, _isActive1);
+            // CodeObject 2
+            int _codeObjectID2 = 2;
+            float[] _position2 = { 2f, 2f, 4f };
+            float[] _rotation2 = { 2f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive2 = false;
+            CodeObject _codeObject2 = new CodeObject(_codeObjectID2, _position2, _rotation2, _isActive2);
+            // CodeObject 3, this time we want to have the codeObject to be initialised with the default value
+            // true for the isActive 
+            int _codeObjectID3 = 3;
+            float[] _position3 = { 3f, 2f, 4f };
+            float[] _rotation3 = { 3f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            CodeObject _codeObject3 = new CodeObject(_codeObjectID3, _position3, _rotation3);
+            // then create the dictionary for initialisation of the recognition manager
+            Dictionary<int, CodeObject> _initialDict = new Dictionary<int, CodeObject>();
+            _initialDict.Add(_codeObjectID1, _codeObject1);
+            _initialDict.Add(_codeObjectID2, _codeObject2);
+            _initialDict.Add(_codeObjectID3, _codeObject3);
+            // then create the testrecognition manager and the dictionary with all the initialized markers in it. 
+            // But all have isActive = false...
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _initialDict));
+            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
+            // now send the message that codeObject 1 should be set active
+            var _msgSetActiveCO1 = new SetActiveVirtualObject("SetActiveCO1", 1);
+            var responseToSetActive = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(_msgSetActiveCO1, TimeSpan.FromSeconds(1));
+            // now we should get the right messageID and the right CodeObject ID back
+            Assert.AreEqual(responseToSetActive.messageID, "SetActiveCO1");
+            Assert.AreEqual(responseToSetActive.nowActiveVirtualObjectID, 1);
+            // and then test if the data is at the current state in the dictionary
+            // first make an request all call to the recognitionManager to get the whole Dictionary back
+            var _msgRequestAll = new RequestAllVirtualObjects("RequestAll1", TimeSpan.FromSeconds(1));
+            var responseToRequestAll = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(_msgRequestAll);
+            // and then test if the right thing is in the dictionary
+            Assert.AreEqual(responseToRequestAll.messageID, "RequestAll1");
+            Assert.AreEqual(responseToRequestAll.newCodeObjectIDToCodeObject.ContainsKey(1), true);
+            Assert.AreEqual(responseToRequestAll.newCodeObjectIDToCodeObject[1].isActive, true);
+            // test if we wanna set Active a CodeObject which does not exist, then a failed to message should come back
+            var _msgSetActiveCO7 = new SetActiveVirtualObject("SetActiveCO7", 7);
+            var responseToSetActive7 = await _pidTestRecognitionManager.RequestAsync<FailedToSetActiveVirtualObject>(_msgSetActiveCO7, TimeSpan.FromSeconds(1));
+            Assert.AreEqual(responseToSetActive7.messageID, "SetActiveCO7");
         }
 
         /// <summary>
@@ -116,46 +138,93 @@ namespace TourBackend
         [TestMethod]
         public async Task Control_Asks_RecognitionManager_To_SetInActiveVirtualObject()
         {
-            // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
-            // test a protocoll
-            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
-
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
-            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
-            // here we specify the attribute of the CodeObject => look at the constructor of the codeObject
-            // we need this to be defined in order to be able to say which VirtualObject we want to setInActive
+            // first create some objects which should be in the dictionary of the recognition Manager in the 
+            // initialize step => all codeObjects should have the isActive false
             // CodeObject 1
-            float[] position1 = { 1, 2, 3 };
-            float[] rotation1 = { 2, 2, 4 };
-            // here we use the non default constructor such that the isActive boolean is initialised true
-            // we could also use the other constructor but here we see it explicitely
-            var _codeObject1 = new CodeObject(41, position1, rotation1, true);
-            // define the message
-            var msg = new SetActiveVirtualObject("SetInActive1", 41);
-            // Now send the message to the RecognitionManager to SetInActive the _codeObject 1 and store the response
-            var response = await _pidTestRecognitionManager.RequestAsync<RespondSetActiveVirtualObject>(msg, TimeSpan.FromSeconds(1));
-            // now test if the response does contain the information that we want...
-            Assert.AreEqual(response.messageID, "SetInActive1");
-            Assert.AreEqual(response.nowActiveVirtualObjectID, 41);
-            // and test that the CodeObject changed his internal state isActive to false
-            Assert.AreEqual(_codeObject1, false);
+            int _codeObjectID1 = 1;
+            float[] _position1 = { 1f, 2f, 4f };
+            float[] _rotation1 = { 1f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive1 = true;
+            CodeObject _codeObject1 = new CodeObject(_codeObjectID1, _position1, _rotation1, _isActive1);
+            // CodeObject 2
+            int _codeObjectID2 = 2;
+            float[] _position2 = { 2f, 2f, 4f };
+            float[] _rotation2 = { 2f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive2 = false;
+            CodeObject _codeObject2 = new CodeObject(_codeObjectID2, _position2, _rotation2, _isActive2);
+            // CodeObject 3, this time we want to have the codeObject to be initialised with the default value
+            // true for the isActive 
+            int _codeObjectID3 = 3;
+            float[] _position3 = { 3f, 2f, 4f };
+            float[] _rotation3 = { 3f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            CodeObject _codeObject3 = new CodeObject(_codeObjectID3, _position3, _rotation3);
+            // then create the dictionary for initialisation of the recognition manager
+            Dictionary<int, CodeObject> _initialDict = new Dictionary<int, CodeObject>();
+            _initialDict.Add(_codeObjectID1, _codeObject1);
+            _initialDict.Add(_codeObjectID2, _codeObject2);
+            _initialDict.Add(_codeObjectID3, _codeObject3);
+            // then create the testrecognition manager and the dictionary with all the initialized markers in it. 
+            // But all have isActive = false...
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _initialDict));
+            var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
+            // now send the message that codeObject 1 should be set inActive
+            var _msgSetInActiveCO1 = new SetInActiveVirtualObject("SetInActiveCO1", 1);
+            var responseToSetInActive = await _pidTestRecognitionManager.RequestAsync<RespondSetInActiveVirtualObject>(_msgSetInActiveCO1, TimeSpan.FromSeconds(1));
+            // now we should get the right messageID and the right CodeObject ID back
+            Assert.AreEqual(responseToSetInActive.messageID, "SetInActiveCO1");
+            Assert.AreEqual(responseToSetInActive.nowInActiveVirtualObjectID, 1);
+            // and then test if the data is at the current state in the dictionary
+            // first make an request all call to the recognitionManager to get the whole Dictionary back
+            var _msgRequestAll = new RequestAllVirtualObjects("RequestAll1", TimeSpan.FromSeconds(1));
+            var responseToRequestAll = await _pidTestRecognitionManager.RequestAsync<RespondRequestAllVirtualObjects>(_msgRequestAll);
+            // and then test if the right thing is in the dictionary, meaning that the isActive of the 
+            // codeObject1 has changed from true to false and that is if the CodeObject is no longer in that respondDictionary
+            Assert.AreEqual(responseToRequestAll.messageID, "RequestAll1");
+            Assert.AreEqual(responseToRequestAll.newCodeObjectIDToCodeObject.ContainsKey(1), false);
+            // test if we wanna set InActive a CodeObject which does not exist, then a failed to message should come back
+            var _msgSetInActiveCO7 = new SetInActiveVirtualObject("SetInActiveCO7", 7);
+            var responseToSetInActive7 = await _pidTestRecognitionManager.RequestAsync<FailedToSetInActiveVirtualObject>(_msgSetInActiveCO7, TimeSpan.FromSeconds(1));
+            Assert.AreEqual(responseToSetInActive7.messageID, "SetInActiveCO7");
         }
         /// <summary>
         /// here the idea is that if the controlActor gets a message from the cameraFeedActor that a new 
         /// frame arrived, he should forward this message to the recognitionManager. The communication between
         /// the controlActor and the recognitionManager is here ONLY tested and not the whole flow from the camerafeedActor.
         /// Therefore if the message NewFrameArrived comes to the Recognition Manager than he should start to work
-        /// with this Frame and if he is finished he should return the message that the 
+        /// with this Frame and if he is finished he should answer with the message RespondNewframeArrived 
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task Control_forwards_message_NewFrameArrived_to_the_recognitionManager()
         {
-            // here we create the testRecognitionManager. We only need him and no one more cause this is enough if we wanna
-            // test a protocoll
-            Dictionary<int, CodeObject> dict = new Dictionary<int, CodeObject>();
-
-            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", dict));
+            // first create some objects which should be in the dictionary of the recognition Manager in the 
+            // initialize step => all codeObjects should have the isActive false
+            // CodeObject 1
+            int _codeObjectID1 = 1;
+            float[] _position1 = { 1f, 2f, 4f };
+            float[] _rotation1 = { 1f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive1 = true;
+            CodeObject _codeObject1 = new CodeObject(_codeObjectID1, _position1, _rotation1, _isActive1);
+            // CodeObject 2
+            int _codeObjectID2 = 2;
+            float[] _position2 = { 2f, 2f, 4f };
+            float[] _rotation2 = { 2f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            bool _isActive2 = false;
+            CodeObject _codeObject2 = new CodeObject(_codeObjectID2, _position2, _rotation2, _isActive2);
+            // CodeObject 3, this time we want to have the codeObject to be initialised with the default value
+            // true for the isActive 
+            int _codeObjectID3 = 3;
+            float[] _position3 = { 3f, 2f, 4f };
+            float[] _rotation3 = { 3f, 2.3f, 34f, 0.5f, 2f, 3f, 8.9f, 0.9f, 2.1f };
+            CodeObject _codeObject3 = new CodeObject(_codeObjectID3, _position3, _rotation3);
+            // then create the dictionary for initialisation of the recognition manager
+            Dictionary<int, CodeObject> _initialDict = new Dictionary<int, CodeObject>();
+            _initialDict.Add(_codeObjectID1, _codeObject1);
+            _initialDict.Add(_codeObjectID2, _codeObject2);
+            _initialDict.Add(_codeObjectID3, _codeObject3);
+            // then create the testrecognition manager and the dictionary with all the initialized markers in it. 
+            // But all have isActive = false...
+            var _propsTestRecognitionManager = Actor.FromProducer(() => new RecognitionManager("RecognitionManager", _initialDict));
             var _pidTestRecognitionManager = Actor.Spawn(_propsTestRecognitionManager);
             // create a new object of the message type NewFrameArrived. for this we need firstly a new messageID
             string _messageID = "NewFrameArrived1";

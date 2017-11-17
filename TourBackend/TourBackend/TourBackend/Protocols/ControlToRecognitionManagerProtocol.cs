@@ -124,6 +124,7 @@ namespace TourBackend
     {
         public string messageID;
         public int nowActiveVirtualObjectID;
+        
 
         public RespondSetActiveVirtualObject(string _messageID, int _nowActiveVirtualObjectID)
         {
@@ -160,12 +161,12 @@ namespace TourBackend
         // we also need a dictionary to be able to give all requested CodeObjects back to the ControlActor
         // in form of a dictionary with a key CodeObjectID and a variable CodeObject itself. BUT a codeObject should
         // only be in this dictionary if its internal variable isActive == true, otherwise it should not be in the dictionary
-        public Dictionary<int, CodeObject> codeObjectIDToCodeObject;
+        public Dictionary<int, CodeObject> newCodeObjectIDToCodeObject;
 
         public RespondRequestAllVirtualObjects(string _messageID, Dictionary<int,CodeObject> _dict)
         {
             messageID = _messageID;
-            codeObjectIDToCodeObject = _dict;
+            newCodeObjectIDToCodeObject = _dict;
         }
     }
 
@@ -277,13 +278,26 @@ namespace TourBackend
     {
         public CodeObject codeObject;
         public int codeObjectID;
-        public CreateNewVirtualObject(int _codeObjectID, CodeObject _codeObject)
+        public string messageID;
+        public CreateNewVirtualObject(string _messageID, int _codeObjectID, CodeObject _codeObject)
         {
+            messageID = _messageID;
             codeObject = _codeObject;
             codeObjectID = _codeObjectID;
         }
     }
- 
+    /// <summary>
+    /// this is the respond to the created object
+    /// </summary>
+    public class RespondCreateNewVirtualObject
+    {
+        public string messageID;
+        public RespondCreateNewVirtualObject(string _messageID)
+        {
+            messageID = _messageID;
+        }
+    }
+
     /// <summary>
     /// here the sense of this message is that if we got the message NewFrameArrived with a specific messageID,
     /// then we should work with that frame and if the work is succesfully done we should respond with that 
