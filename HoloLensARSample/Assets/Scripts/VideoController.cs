@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Threading;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 #if !UNITY_EDITOR && UNITY_METRO // UWP specific DLLs
 using Windows.Media;
@@ -20,37 +21,40 @@ using System.Threading.Tasks;
  * 1. Call Initialize with the CameraFeedSyncObject as argument
  
      */
-  
-#if !UNITY_EDITOR && UNITY_METRO
+
+
 public class VideoController : MonoBehaviour
 {
-
-    private MediaCapture mediaCapture = null;
     public TourBackend.CameraFeedSyncObject sync;
-    private MediaFrameReader frameReader = null;
     private string TAG = "debug...";
     public System.Diagnostics.Stopwatch stopwatch = null;
 
-    public async Task Initialize(TourBackend.CameraFeedSyncObject _sync)
+
+    public async Task Initialize()
     {
-        sync = _sync;
+
+
+#if !UNITY_EDITOR && UNITY_METRO
         await InitializeMediaCaptureAsyncTask();
         await StartFrameReaderAsyncTask();
+#endif
     }
 
-    public void Start(TourBackend.CameraFeedSyncObject _sync) {
-
-        TaskStarter(_sync);
-    }
-    public void Update() {
-    }
-
-    public void TaskStarter(TourBackend.CameraFeedSyncObject _sync)
+    public async void Start(TourBackend.CameraFeedSyncObject _sync)
     {
-        Task task = Initialize(_sync);
-        task.Start();
-        
+        sync = _sync;
+        await Initialize();
     }
+    public void Update()
+    {
+    }
+
+#if !UNITY_EDITOR && UNITY_METRO
+
+    private MediaCapture mediaCapture = null;
+    private MediaFrameReader frameReader = null;
+
+
 
     public async Task<bool> InitializeMediaCaptureAsyncTask()
     {
@@ -107,6 +111,7 @@ public class VideoController : MonoBehaviour
             controller.frameHeight = Convert.ToInt32(minResFormat.VideoFormat.Height);
             videoBufferSize = controller.frameWidth * controller.frameHeight * 4;
             */
+            
             Debug.Log(TAG + ": FrameReader is successfully initialized");
         }
         catch (Exception e)
@@ -164,7 +169,6 @@ public class VideoController : MonoBehaviour
         }
         sync.UpdateFrame();
     }
-
+#endif
 }
 
-#endif

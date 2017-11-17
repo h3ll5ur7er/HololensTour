@@ -26,13 +26,10 @@ namespace TourBackend
 
             //Todo:
             //Initialize ARVideo and give reference of CameraFeedSyncObject
-            ARUWPVideo aruwpVideo = this.gameObject.AddComponent<ARUWPVideo>();
+            VideoController videoController = this.gameObject.AddComponent<VideoController>();
+            videoController.Start(cfSyncObject);            
             //Initialize Framework and give refences of SyncObject and CameraFeedSyncObject 
-
-
-            //Test
-           // VideoController videoController = this.gameObject.AddComponent<VideoController>();
-           // videoController.Start(cfSyncObject);
+            
         }
 
         // Update is called once per frame
