@@ -40,7 +40,11 @@ public class VideoController : MonoBehaviour
 #endif
     }
 
-    public async void Start(TourBackend.CameraFeedSyncObject _sync)
+    public void Start()
+    {
+    }
+
+    public async void TaskStarter(TourBackend.CameraFeedSyncObject _sync)
     {
         sync = _sync;
         await Initialize();

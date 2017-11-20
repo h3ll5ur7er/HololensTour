@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-#if !UNITY_EDITOR && UNITY_METRO
 using System.Threading.Tasks;
+using System.Diagnostics;
+
+#if !UNITY_EDITOR && UNITY_METRO
 using Proto;
 #endif
-
 
 namespace TourBackend
 {
@@ -19,16 +19,17 @@ namespace TourBackend
         public object thisLock = new Object();
 
         public string objectid;
-        public Dictionary<string, CodeObject> dict;
+        public Dictionary<int, CodeObject> dict;
 
         //Basic Konstruktor 
-        public SyncObject(string _objectid, Dictionary<string, CodeObject> _dict)
+        public SyncObject(string _objectid, Dictionary<int, CodeObject> _dict)
         {
             objectid = _objectid;
             dict = _dict;
         }
 
-        public void SetTimeStamp(Int64 _timestamp) {
+        public void SetTimeStamp(Int64 _timestamp)
+        {
             this.timestamp = _timestamp;
         }
 
@@ -40,52 +41,73 @@ namespace TourBackend
     public class CodeObject
     {
 
+        public enum MarkerType
+        {
+            single,
+            single_barcode,
+            single_buffer,
+            multi
+        }
+        public MarkerType type;
+        public string singleFileName = "hiro.patt";
+        private byte[] singleBufferBuffer = null;
+        public float singleWidth = 80.0f;
+        public bool oUseContPoseEst = true;
+        public float oConfCutOff = 0.5f;
+
+        public bool applyRotation = true;
+        public bool applyTranslation = true;
+        public int id = -1;
+
         public bool isActive = true;
-        public string objectid;
-        public int mediaid;
         public float[] position;
         public float[] rotation;
+        public float[] scaling;
 
         public CodeObject(CodeObject codeobj)
         {
 
             position = new float[3];
             rotation = new float[9];
+            scaling = new float[3];
 
-            objectid = codeobj.objectid;
-            mediaid = codeobj.mediaid;
+            id = codeobj.id;
             codeobj.position.CopyTo(position, 0);
             codeobj.rotation.CopyTo(rotation, 0);
+            codeobj.scaling.CopyTo(scaling, 0);
             isActive = codeobj.isActive;
+            singleFileName = String.Copy(codeobj.singleFileName);
         }
 
-        public CodeObject(string _objectid, int _mediaid, float[] _position, float[] _rotation, bool _isActive)
+        public CodeObject()
         {
-            objectid = _objectid;
-            mediaid = _mediaid;
+        }
+
+        public CodeObject(int _objectid, float[] _position, float[] _rotation, bool _isActive)
+        {
+            id = _objectid;
             position = _position;
             rotation = _rotation;
             isActive = _isActive;
         }
 
-        public CodeObject(string _objectid, int _mediaid, float[] _position, float[] _rotation)
+        public CodeObject(int _objectid, float[] _position, float[] _rotation)
         {
-            objectid = _objectid;
-            mediaid = _mediaid;
+            id = _objectid; ;
             position = _position;
             rotation = _rotation;
         }
     }
-    
+
     // Request to update the SyncObject with the current TourState
 
     public class WriteCurrentTourState
     {
 
         public string id;
-        public Dictionary<string, CodeObject> dict;
+        public Dictionary<int, CodeObject> dict;
 
-        public WriteCurrentTourState(string _id, Dictionary<string, CodeObject> _dict)
+        public WriteCurrentTourState(string _id, Dictionary<int, CodeObject> _dict)
         {
             id = _id;
             dict = _dict;
@@ -95,11 +117,13 @@ namespace TourBackend
 
     // Respond that the updating of the SyncObject has been successful
 
-    public class RespondWriteCurrentTourState {
+    public class RespondWriteCurrentTourState
+    {
 
         public string id;
 
-        public RespondWriteCurrentTourState(string _id) {
+        public RespondWriteCurrentTourState(string _id)
+        {
             id = _id;
         }
 

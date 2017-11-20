@@ -20,5 +20,17 @@ namespace TourBackend
 
             return copy;
         }
+
+        public static Dictionary<int, CodeObject> CopyInt(Dictionary<int, CodeObject> _dict)
+        {
+            Dictionary<int, CodeObject> copy = new Dictionary<int, CodeObject>();
+
+            foreach (KeyValuePair<int, CodeObject> p in _dict)
+            {
+                copy.Add(p.Key, new CodeObject(p.Value));
+            }
+
+            return copy;
+        }
     }
 }

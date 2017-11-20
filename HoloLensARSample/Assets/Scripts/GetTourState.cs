@@ -9,8 +9,11 @@ namespace TourBackend
     {
         public SyncObject syncObject;
         public CameraFeedSyncObject cfSyncObject;
-        public Dictionary<string, CodeObject> CopyOfDict;// = new Dictionary<string, CodeObject>();
+        public Dictionary<int, CodeObject> CopyOfDict;// = new Dictionary<string, CodeObject>();
         public System.Int64 lasttimestamp;
+        public int numberOfMarkers = 2;
+        //pattername to mediaid
+        public Dictionary<string, string> mediaidDict;
 
 
         // Use this for initialization
@@ -18,18 +21,46 @@ namespace TourBackend
         {
             //Initialisierung SyncObject
             lasttimestamp = 10;
-            syncObject = new SyncObject("syncid", new Dictionary<string, CodeObject>());
+            syncObject = new SyncObject("syncid", new Dictionary<int, CodeObject>());
             syncObject.SetTimeStamp(lasttimestamp);
-            CopyOfDict = new Dictionary<string, CodeObject>();
+            CopyOfDict = new Dictionary<int, CodeObject>();
             //Initialisation of CameraFeedSyncObject
             cfSyncObject = new CameraFeedSyncObject("cfsyncid");
 
             //Todo:
             //Initialize ARVideo and give reference of CameraFeedSyncObject
             VideoController videoController = this.gameObject.AddComponent<VideoController>();
-            videoController.Start(cfSyncObject);            
+            videoController.TaskStarter(cfSyncObject);
             //Initialize Framework and give refences of SyncObject and CameraFeedSyncObject 
+            //start it in dll somehow -> Talk with Moritz
+
             
+            //loading pattern names from maybe a txt file called single.txt For the beginning hardcoded
+            string[,] patterns = new string[2,2];
+            //numberOfMarkers = numberOfPatterns
+            patterns[0,0] = "hiro.patt";
+            patterns[0,1] = "1";
+            patterns[1,0] = "kanji.patt";
+            patterns[1,1] = "2";
+            
+
+            //Marker codeObject array
+            CodeObject[] markers = new CodeObject[numberOfMarkers];
+            mediaidDict = new Dictionary<string, string>();
+            for (int index = 0; index < numberOfMarkers; index++)
+            {
+                markers[index] = new CodeObject();
+                markers[index].singleFileName = patterns[index,0];
+                markers[index].type = CodeObject.MarkerType.single;
+                
+                //mediaidDict is created
+                mediaidDict.Add(patterns[index,0], patterns[index,1]);
+            }
+            FrameWork frameWork = new FrameWork(syncObject, cfSyncObject, markers);
+            frameWork.Initialize();
+
+
+    
         }
 
         // Update is called once per frame
@@ -47,25 +78,27 @@ namespace TourBackend
                 //CopyOfDict = syncObject.dict;
 
                 //Deep copy of dict
-                CopyOfDict = CopySyncDict.Copy(syncObject.dict);
-                
+                CopyOfDict = CopySyncDict.CopyInt(syncObject.dict);
+
                 //ReadDictionaryData
-                foreach (string objectid in CopyOfDict.Keys)
+                foreach (int id in CopyOfDict.Keys)
                 {
                     //CodeObject with current key
-                    CodeObject obj = CopyOfDict[objectid];
-                    //TestTypeOfData
-                    switch (obj.mediaid)
+                    CodeObject obj = CopyOfDict[id];
+
+                    string mediaid = mediaidDict[obj.singleFileName];
+                   
+                    switch (mediaid)
                     {
-                        case 1:
+                        case "1":
                             //instantiate Texture, set position and rotation
                             InstantiateTexture(obj);
                             break;
-                        case 2:
+                        case "2":
                             //instantiate 3D model, set position and rotation
                             InstantiateModel(obj);
                             break;
-                        case 3:
+                        case "3":
                             //instantiate video, set position and rotation
                             InstantiateVideo(obj);
                             break;
@@ -85,9 +118,9 @@ namespace TourBackend
         public void InstantiateTexture(CodeObject obj)
         {
             //Let the option open to load the texture itself instead of loading a prefab. Can be done later
-            GameObject textureobj = (GameObject)Resources.Load("Texture/" + obj.objectid);
+            GameObject textureobj = (GameObject)Resources.Load("Texture/" + obj.singleFileName);
             textureobj = Instantiate(textureobj);
-            textureobj.transform.name = obj.objectid;
+            textureobj.transform.name = obj.id.ToString();
 
             //Set position
             textureobj.transform.position = SetPosition(obj);
@@ -99,9 +132,9 @@ namespace TourBackend
 
         public void InstantiateModel(CodeObject obj)
         {
-            GameObject modelobj = (GameObject)Resources.Load("Model/" + obj.objectid);
+            GameObject modelobj = (GameObject)Resources.Load("Model/" + obj.singleFileName);
             modelobj = Instantiate(modelobj);
-            modelobj.transform.name = obj.objectid;
+            modelobj.transform.name = obj.id.ToString();
 
             //Set position
             modelobj.transform.position = SetPosition(obj);
@@ -114,9 +147,9 @@ namespace TourBackend
         public void InstantiateVideo(CodeObject obj)
         {
             //Let the option open to load the texture itself instead of loading a prefab. Can be done later
-            GameObject videoobj = (GameObject)Resources.Load("Video/" + obj.objectid);
+            GameObject videoobj = (GameObject)Resources.Load("Video/" + obj.singleFileName);
             videoobj = Instantiate(videoobj);
-            videoobj.transform.name = obj.objectid;
+            videoobj.transform.name = obj.id.ToString();
 
             //Set position
             videoobj.transform.position = SetPosition(obj);
@@ -128,7 +161,7 @@ namespace TourBackend
             var videoplayer = videoobj.GetComponent<UnityEngine.Video.VideoPlayer>();
 
             Debug.Log(videoplayer.isPrepared + " : Status of the videoplayer");
-            
+
             videoplayer.playOnAwake = true;
             videoplayer.waitForFirstFrame = true;
 

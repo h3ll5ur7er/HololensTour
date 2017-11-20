@@ -20,12 +20,11 @@ namespace TourBackend
             //GameObject test = new GameObject();
             //Create getTourState object
             //GetTourState getTourState = new GameObject().AddComponent<GetTourState>();
-            
             getTourState.Start();
 
             //Compare if the object is as expected empty
             Assert.AreEqual(getTourState.syncObject.objectid, "syncid");
-            CollectionAssert.AreEqual(getTourState.syncObject.dict, new Dictionary<string, CodeObject>());
+            CollectionAssert.AreEqual(getTourState.syncObject.dict, new Dictionary<int, CodeObject>());
             Assert.AreEqual(getTourState.syncObject.timestamp, 10);
 
         }
@@ -99,18 +98,22 @@ namespace TourBackend
         public void GetTourState_initiate_model_Prefab_with_ID()
         {
             //GetTourState getTourState = new GameObject().AddComponent<GetTourState>();
-            CodeObject obj = new CodeObject("modelid", 2, new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 });
+            //changed modelid to 123 , deleted mediaid 2 hence codeobject was quickly changed by Moritz
+            getTourState.Start();
+            CodeObject obj = new CodeObject(123 , new float[] { 0, 0, 0 }, new float[] { 0, 0, 0 });
+            obj.singleFileName = "kanji.patt";
             //Call Function that creates Object in Unity
             getTourState.InstantiateModel(obj);
             //Search for object in Unity
             GameObject model = null;
-            model = GameObject.Find("modelid");
+            //also change modelid to 123
+            model = GameObject.Find("123");
             Assert.AreNotEqual(model, null);
             //Destroy object in Unity
             getTourState.DestroyObject(model);
 
         }
-
+        //same changes as above
         [Test]
         public void GetTourState_initialize_model_Prefab_with_ID_on_defined_position()
         {
@@ -118,12 +121,14 @@ namespace TourBackend
             //Position from origin
             Vector3 position = new Vector3(0.1f, 1, 1);
             //Create new Codeobject
-            CodeObject obj = new CodeObject("modelid", 2, new float[] { 0.1f, 1, 1 }, new float[] { 0, 0, 0 });
+            getTourState.Start();
+            CodeObject obj = new CodeObject(123, new float[] { 0.1f, 1, 1 }, new float[] { 0, 0, 0 });
+            obj.singleFileName = "kanji.patt";
             //Call Function that creates Object in Unity
             getTourState.InstantiateModel(obj);
             //Search for object in Unity
             GameObject model = null;
-            model = GameObject.Find("modelid");
+            model = GameObject.Find("123");
             //Checks if object is moved to expected position
             Assert.AreEqual(model.transform.position, position);
 
@@ -131,20 +136,23 @@ namespace TourBackend
             getTourState.DestroyObject(model);
 
         }
-
+        //same changes as above
         [Test]
         public void GetTourState_initialize_model_Prefab_with_ID_rotated_with_defined_eulerangles()
         {
             //GetTourState getTourState = new GameObject().AddComponent<GetTourState>();
             //Position from origin
             Vector3 eulerangles = new Vector3(30f, 45f, 60f);
+
+            getTourState.Start();
             //Create new Codeobject
-            CodeObject obj = new CodeObject("modelid", 2, new float[] { 0f, 0f, 0f }, new float[] { 30f, 45f, 60f });
+            CodeObject obj = new CodeObject(123, new float[] { 0f, 0f, 0f }, new float[] { 30f, 45f, 60f });
+            obj.singleFileName = "kanji.patt";
             //Call Function that creates Object in Unity
             getTourState.InstantiateModel(obj);
             //Search for object in Unity
             GameObject model = null;
-            model = GameObject.Find("modelid");
+            model = GameObject.Find("123");
             //Checks if object is moved to expected position
             Assert.AreEqual((model.transform.eulerAngles.x - eulerangles.x) < 0.0001, true);
             Assert.AreEqual((model.transform.eulerAngles.y - eulerangles.y) < 0.0001, true);
@@ -155,7 +163,7 @@ namespace TourBackend
             getTourState.DestroyObject(model);
 
         }
-
+        /*commented until talked with Moritz
         [Test]
         public void GetTourState_initiate_Texture2D_Prefab_with_ID()
         {
@@ -188,7 +196,7 @@ namespace TourBackend
             getTourState.DestroyObject(video);
 
         }
-        
+        */
         //not necesarry for beginning. Videoplayer.isPrepared -> Play() not autoplay
         /*
         [Test] public void GetTourState_Video_is_playing()
@@ -206,6 +214,7 @@ namespace TourBackend
 
         }
         */
+        
         //Only two show how to test Vector3 objects
         [Test]
         public void VectorAssertTest()
@@ -233,6 +242,7 @@ namespace TourBackend
             
         }
         //Todo: reference of CameraFeedSyncObject
+        /*
         [Test]
         public void GetTourState_addComponent_ARUWPVideo()
         {
@@ -241,7 +251,7 @@ namespace TourBackend
             //Check if Component is attached
             Assert.AreNotEqual(null,getTourState.GetComponent<ARUWPVideo>());
         }
-
+        */
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]
