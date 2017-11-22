@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
 using Proto;
 using System.Threading.Tasks;
 // the next ones are needed for the test with the frames

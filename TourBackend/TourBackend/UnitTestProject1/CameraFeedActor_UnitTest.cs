@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Proto;
