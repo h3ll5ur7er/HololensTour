@@ -4,20 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Proto;
+using OpenCvSharp;
 
 namespace TourBackend
 {
     public class RecognitionManager : IActor
     {
-
+        // this is the id of this actor
         protected string Id { get; }
+        // this dictionary is created when the recognition manager gets initialized by the controlactor and
+        // it stays static meaning that the keys to value relations will not change. The only thing that changes
+        // are the codeObject itself id est their properties.
         public Dictionary<int,CodeObject> codeObjectIDToCodeObject = new Dictionary<int, CodeObject>();
+        // here is the constructor
         public RecognitionManager(string id, Dictionary<int, CodeObject> _dict)
         {
             Id = id;
             codeObjectIDToCodeObject = _dict;
         }
-
+        // here we write all actions if we receive a certain message
         public Task ReceiveAsync(IContext context)
         {
             var msg = context.Message;
@@ -97,6 +102,14 @@ namespace TourBackend
                     break;
             }
             return Actor.Done;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void frameEvaluation()
+        {
+
         }
 
     }
