@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Proto;
-using Windows.Graphics.Imaging;
+using System.Drawing;
 
 namespace TourBackend
 {
@@ -14,7 +14,7 @@ namespace TourBackend
         public string id { get; }
         public CameraFeedSyncObject sync;
         public PID ctrlActor;
-        public SoftwareBitmap latestBitmap;
+        public Bitmap latestBitmap;
         public Int64 latestTimestamp;
 
         public CameraFeedActor(string _id, CameraFeedSyncObject _sync, PID _ctrlActor)

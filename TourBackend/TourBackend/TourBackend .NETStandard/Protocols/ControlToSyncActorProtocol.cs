@@ -36,22 +36,6 @@ namespace TourBackend
 
     public class CodeObject {
 
-        public enum MarkerType
-        {
-            single,
-            single_barcode,
-            single_buffer,
-            multi
-        }
-        public MarkerType type;
-        public string singleFileName = "hiro.patt";
-        private byte[] singleBufferBuffer = null;
-        public float singleWidth = 80.0f;
-        public bool oUseContPoseEst = true;
-        public float oConfCutOff = 0.5f;
-
-        public bool applyRotation = true;
-        public bool applyTranslation = true;
         public int id = -1;
 
         public bool isActive = true;
@@ -70,7 +54,6 @@ namespace TourBackend
             codeobj.rotation.CopyTo(rotation, 0);
             codeobj.scaling.CopyTo(scaling, 0);
             isActive = codeobj.isActive;
-            singleFileName = String.Copy(codeobj.singleFileName);
         }
 
         public CodeObject()

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
 using Proto;
 using System.Threading;
 using System.IO;
@@ -15,9 +14,8 @@ namespace TourBackend
     public class UnitTest1
     {
         [TestMethod]
-        public async Task A_single_frame_needs_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_Frames()
+        public void A_single_frame_needs_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_Frames()
         {
-            SoftwareBitmap testframe;
             CameraFeedSyncObject camerafeedsyncobject = new CameraFeedSyncObject("new");
             SyncObject syncobject = new SyncObject("sync1", new Dictionary<int, CodeObject>());
 
@@ -40,7 +38,7 @@ namespace TourBackend
             path = Path.Combine(path, "Resources");
             path = Path.Combine(path, "TestVideo_000.bmp");
             Stream testfile = File.OpenRead(path);
-            testframe = await Utils.CreateTestFrame(testfile);
+            var testframe = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile);
 
             lock (camerafeedsyncobject.thisLock)
             {
@@ -64,9 +62,8 @@ namespace TourBackend
         }
 
         [TestMethod]
-        public async Task Multiple_frames_need_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_Frames()
+        public void Multiple_frames_need_to_travel_from_CameraFeedSyncObject_To_SyncActor_with_mock_Frames()
         {
-            SoftwareBitmap testframe;
             CameraFeedSyncObject camerafeedsyncobject = new CameraFeedSyncObject("new");
             SyncObject syncobject = new SyncObject("sync1", new Dictionary<int, CodeObject>());
 
@@ -91,7 +88,7 @@ namespace TourBackend
                 path = Path.Combine(path, "Resources");
                 path = Path.Combine(path, "TestVideo_00"+i+".bmp");
                 Stream testfile = File.OpenRead(path);
-                testframe = await Utils.CreateTestFrame(testfile);
+                var testframe = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile);
 
                 lock (camerafeedsyncobject.thisLock)
                 {

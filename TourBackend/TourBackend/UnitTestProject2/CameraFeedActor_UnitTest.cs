@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
 using Proto;
 using System.Threading;
 using System.IO;
@@ -39,28 +38,6 @@ namespace TourBackend
         }
 
         [TestMethod]
-        public async Task CameraFeedSyncObject_must_be_writable_when_using_local_frames()
-        {
-            SoftwareBitmap testframe;
-            CameraFeedSyncObject test = new CameraFeedSyncObject("new");
-
-            // Creates a testframe with the right Type
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            path = Path.Combine(path, "Resources");
-            path = Path.Combine(path, "TestVideo_000.bmp");
-            Stream testfile = File.OpenRead(path);
-            testframe = await Utils.CreateTestFrame(testfile);
-
-            Assert.AreEqual(null, test.bitmap);
-
-            test.bitmap = testframe;
-
-            Assert.AreNotEqual(null, test.bitmap);
-            Assert.AreEqual(testframe.PixelHeight, test.bitmap.PixelHeight);
-            Assert.AreEqual(testframe.PixelWidth, test.bitmap.PixelWidth);
-        }
-
-        [TestMethod]
         public async Task NewFrameArrived_must_be_correctly_constructed() {
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -69,9 +46,9 @@ namespace TourBackend
 
             Stream testfile = File.OpenRead(path);
 
-            var testframe = await Utils.CreateTestFrame(testfile);
+            var testframe = System.Drawing.Bitmap.FromStream(testfile);
 
-            var newframe = new NewFrameArrived("id1", testframe);
+            var newframe = new NewFrameArrived("id1", (System.Drawing.Bitmap)testframe);
 
             Assert.AreEqual("id1", newframe.id);
 
@@ -83,7 +60,6 @@ namespace TourBackend
         [TestMethod]
         public async Task CameraFeedActor_needs_to_get_update_from_CameraFeedSyncObject_when_using_local_frames()
         {
-            SoftwareBitmap testframe;
             CameraFeedSyncObject test = new CameraFeedSyncObject("new");
             object msg = new Object();
 
@@ -105,7 +81,7 @@ namespace TourBackend
             path = Path.Combine(path, "Resources");
             path = Path.Combine(path, "TestVideo_007.bmp");
             Stream testfile = File.OpenRead(path);
-            testframe = await Utils.CreateTestFrame(testfile);
+            var testframe = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile);
 
             lock (test.thisLock)
             {

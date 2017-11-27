@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Proto;
 using System.Threading.Tasks;
-// the next ones are needed for the test with the frames
-using Windows.Graphics.Imaging;
 using System.Reflection;
 using System.IO;
 
@@ -228,13 +226,12 @@ namespace TourBackend
             string _messageID = "NewFrameArrived1";
             // and secondly a SoftwareBitmap and to get a testbitmap we need to follow these steps...they are
             // copied from the CameraFeedActor_UnitTest.cs and where there defined
-            Windows.Graphics.Imaging.SoftwareBitmap _testbitmap;
             // Creates a testframe with the right Type
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path = Path.Combine(path, "Resources");
             path = Path.Combine(path, "TestVideo_000.bmp");
             Stream testfile = File.OpenRead(path);
-            _testbitmap = await Utils.CreateTestFrame(testfile);
+            var _testbitmap = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile);
             // now we are able to create the message
             var msg = new NewFrameArrived(_messageID, _testbitmap);
             // now send this message to the recognitionManager and get the answer in the response variable
@@ -293,14 +290,13 @@ namespace TourBackend
             string _messageID1 = "FrameWithNoMarker";
             // and secondly a SoftwareBitmap and to get a testbitmap we need to follow these steps...they are
             // copied from the CameraFeedActor_UnitTest.cs and where there defined
-            Windows.Graphics.Imaging.SoftwareBitmap _testbitmapNoMarker;
             // Creates a testframe with the right Type
             var path1 = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path1 = Path.Combine(path1, "Resources");
             // here choose a file which has no marker in it
             path1 = Path.Combine(path1, "test_aruco_none.bmp");
             Stream testfile1 = File.OpenRead(path1);
-            _testbitmapNoMarker = await Utils.CreateTestFrame(testfile1);
+            var _testbitmapNoMarker = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile1);
             // now we are able to create the message
             var _noMarkerMsg = new NewFrameArrived(_messageID1, _testbitmapNoMarker);
             // now send this message to the recognitionManager and get the answer in the response variable
@@ -326,14 +322,13 @@ namespace TourBackend
             string _messageID2 = "FrameWithOneMarker";
             // and secondly a SoftwareBitmap and to get a testbitmap we need to follow these steps...they are
             // copied from the CameraFeedActor_UnitTest.cs and where there defined
-            Windows.Graphics.Imaging.SoftwareBitmap _testbitmapOneMarker;
             // Creates a testframe with the right Type
             var path2 = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path2 = Path.Combine(path2, "Resources");
             // here choose a file which has one marker in it and the marker has the same id from codeObject2
             path2 = Path.Combine(path2, "test_aruco_id_1.bmp");
             Stream testfile2 = File.OpenRead(path2);
-            _testbitmapOneMarker = await Utils.CreateTestFrame(testfile2);
+            var _testbitmapOneMarker = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile2);
             // now we are able to create the message
             var _oneMarkerMsg = new NewFrameArrived(_messageID2, _testbitmapOneMarker);
             // now send this message to the recognitionManager and get the answer in the response variable
@@ -359,14 +354,13 @@ namespace TourBackend
             string _messageID3 = "FrameWithThreeMarkers";
             // and secondly a SoftwareBitmap and to get a testbitmap we need to follow these steps...they are
             // copied from the CameraFeedActor_UnitTest.cs and where there defined
-            Windows.Graphics.Imaging.SoftwareBitmap _testbitmapThreeMarkers;
             // Creates a testframe with the right Type
             var path3 = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path3 = Path.Combine(path3, "Resources");
             // here choose a file which has one marker in it and the marker has the same id from codeObject2
             path3 = Path.Combine(path3, "test_aruco_id_1_2_3.bmp");
             Stream testfile3 = File.OpenRead(path3);
-            _testbitmapThreeMarkers = await Utils.CreateTestFrame(testfile3);
+            var _testbitmapThreeMarkers = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(testfile3);
             // now we are able to create the message
             var _threeMarkersMsg = new NewFrameArrived(_messageID3, _testbitmapThreeMarkers);
             // now send this message to the recognitionManager and get the answer in the response variable

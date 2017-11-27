@@ -112,7 +112,7 @@ namespace TourBackend
         /// the idea here is that we use this function to recognize the markers in the bitmap and update then all
         /// markers in the dictionary with their position and rotation etc. 
         /// </summary>
-        public void FrameEvaluation(Windows.Graphics.Imaging.SoftwareBitmap _bitmap)
+        public void FrameEvaluation(Bitmap _bitmap)
         {
             /* use the Function from OpenCVSharp.Aruco.CvAruco for the detection: 
              * public static void DetectMarkers(InputArray image, Dictionary dictionary, out Point2f[][] corners, out int[] ids, DetectorParameters parameters, out Point2f[][] rejectedImgPoints)
