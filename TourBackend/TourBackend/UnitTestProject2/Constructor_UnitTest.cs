@@ -227,11 +227,10 @@ namespace TourBackend
         /* test the constructor for the codeObjects. */
 
         [TestMethod]
-        public void CodeObject_must_creat_object()
+        public void CodeObject_must_create_object()
         {
             bool _isActive = false;
             int _objectid = 35735;
-            int _mediaid = 27;
             float[] _position = { 1f, 2f, 3f };
             float[] _rotation = { 2f, 5f, 7f };
             // create two testobjects with the two different constructors

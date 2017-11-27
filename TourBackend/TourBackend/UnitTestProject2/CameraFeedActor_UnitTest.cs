@@ -38,7 +38,7 @@ namespace TourBackend
         }
 
         [TestMethod]
-        public async Task NewFrameArrived_must_be_correctly_constructed() {
+        public void NewFrameArrived_must_be_correctly_constructed() {
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path = Path.Combine(path, "Resources");
@@ -58,7 +58,7 @@ namespace TourBackend
         // Test if CameraFeedSyncObject fires an event FramUpdated and CameraFeedActor listens to it and sends NewFrameArrived to ctrlpid
 
         [TestMethod]
-        public async Task CameraFeedActor_needs_to_get_update_from_CameraFeedSyncObject_when_using_local_frames()
+        public void CameraFeedActor_needs_to_get_update_from_CameraFeedSyncObject_when_using_local_frames()
         {
             CameraFeedSyncObject test = new CameraFeedSyncObject("new");
             object msg = new Object();
