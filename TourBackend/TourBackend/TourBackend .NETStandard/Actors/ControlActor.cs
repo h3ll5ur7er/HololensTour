@@ -47,7 +47,17 @@ namespace TourBackend
     }
 
     public class RespondStartFramework {
+
+        public PID syncactor;
+        public PID recognitionmanager;
+        public PID camerafeedactor;
+
         public RespondStartFramework(){ }
+        public RespondStartFramework(PID _syncactor, PID _recognitionmanager, PID _camerafeedactor) {
+            syncactor = _syncactor;
+            recognitionmanager = _recognitionmanager;
+            camerafeedactor = _camerafeedactor;
+        }
     }
 
     // Attention: This Actor is subject to change!
@@ -126,9 +136,9 @@ namespace TourBackend
             switch (msg)
             {
                 case StartFramework s:
-                    self = s.ctrl;
-                    this.Start();
-                    context.Sender.Tell(new RespondStartFramework());
+                    self = s.ctrl; // Thou shallst know thyself
+                    this.Start(); // Start the sub actors Recognition Manager, Sync Actor & Camera Feed Sync Manager
+                    context.Sender.Tell(new RespondStartFramework(syncActor, recognitionManager, cameraFeedSyncActor));
                     break;
                 case NewFrameArrived n:
                     recognitionManager.Tell(n);

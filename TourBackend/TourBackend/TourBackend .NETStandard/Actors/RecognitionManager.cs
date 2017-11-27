@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Proto;
 using OpenCvSharp;
-//using OpenCvSharp.Extensions;
+using OpenCvSharp.Extensions;
 using System.Drawing;
 using OpenCvSharp.Aruco;
 

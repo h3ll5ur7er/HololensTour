@@ -24,6 +24,7 @@ namespace TourBackend
 
             var propsctrl = Actor.FromProducer(() => new ControlActor("ctrl", syncobj, null, ref debugPID, 2));
             var pidctrl = Actor.Spawn(propsctrl);
+            pidctrl.Tell(new StartFramework(pidctrl));
 
             var pidID2 = debugPID.Id;
 
