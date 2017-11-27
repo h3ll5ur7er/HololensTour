@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Proto;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System.Drawing;
+using OpenCvSharp.Aruco;
 
 namespace TourBackend
 {
@@ -94,8 +97,9 @@ namespace TourBackend
 
                 case NewFrameArrived n:
                     {
-                        // do the work here with the recognition of the frame and if the work is done respond to the sender
-
+                        // do the work here with the recognition of the frame
+                        FrameEvaluation(n.bitmap);
+                        // after the successfull evaluation respond to the control Actor
                         var _respondMsg = new RespondNewFrameArrived(n.id);
                         context.Sender.Tell(_respondMsg);
                     }
@@ -105,10 +109,34 @@ namespace TourBackend
         }
 
         /// <summary>
-        /// 
+        /// the idea here is that we use this function to recognize the markers in the bitmap and update then all
+        /// markers in the dictionary with their position and rotation etc. 
         /// </summary>
-        public void frameEvaluation()
+        public void FrameEvaluation(Windows.Graphics.Imaging.SoftwareBitmap _bitmap)
         {
+            /* use the Function from OpenCVSharp.Aruco.CvAruco for the detection: 
+             * public static void DetectMarkers(InputArray image, Dictionary dictionary, out Point2f[][] corners, out int[] ids, DetectorParameters parameters, out Point2f[][] rejectedImgPoints)
+             * 
+             */
+
+            // Mat _mat = BitmapConverter.ToMat(_bitmap);
+            // indicates the type of markers that will be searched
+            OpenCvSharp.Aruco.Dictionary _dict = OpenCvSharp.Aruco.CvAruco.GetPredefinedDictionary(PredefinedDictionaryName.DictArucoOriginal);
+            // _dict=0; vector of detected marker corners.
+            // For each marker, its four corners are provided. For N detected markers,
+            // the dimensions of this array is Nx4.The order of the corners is clockwise.
+
+            // vector of identifiers of the detected markers. The identifier is of type int.
+            // For N detected markers, the size of ids is also N. The identifiers have the same order than the markers 
+            // in the imgPoints array.
+
+            // marker detection parameters
+            OpenCvSharp.Aruco.DetectorParameters _parameters = DetectorParameters.Create();
+
+            // contains the imgPoints of those squares whose inner code has not a 
+            // correct codification. Useful for debugging purposes.
+
+            OpenCvSharp.Aruco.CvAruco.DetectMarkers(_mat, _dict, out Point2f[][] _corners, out int[] _ids, _parameters , out Point2f[][] _rejectedImgPoints);
 
         }
 
